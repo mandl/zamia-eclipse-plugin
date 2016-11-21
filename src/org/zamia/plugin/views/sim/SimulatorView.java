@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.search.ui.NewSearchUI;
@@ -722,7 +723,12 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 		fTree = new Tree(treeComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		fTree.setLinesVisible(true);
-
+		
+		if (Util.isCocoa())
+		{
+			Font terminalFont = JFaceResources.getFont(JFaceResources.TEXT_FONT);
+			fTree.setFont(terminalFont);
+		}
 		if (Util.isMotif()) {
 			// dark gray because motif uses black as highlight color
 			Color bg = new Color(fDisplay, 80, 80, 80);

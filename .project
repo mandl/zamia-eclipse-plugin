@@ -3,6 +3,7 @@
 	<name>zamia-eclipse-plugin</name>
 	<comment></comment>
 	<projects>
+		<project>zamiacad</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
