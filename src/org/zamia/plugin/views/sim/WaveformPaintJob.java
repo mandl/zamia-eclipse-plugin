@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -137,7 +138,20 @@ public class WaveformPaintJob extends Job {
 		Tree tree = fViewer.getTree();
 
 		TreeItem items[] = tree.getItems();
-		fHeadHeight = tree.getHeaderHeight();
+	
+		if (Util.isGtk())
+		{
+			fHeadHeight = 0;
+		}
+		else if (Util.isCocoa() == true)
+		{
+			fHeadHeight = tree.getHeaderHeight();
+		}
+		else
+		{
+			fHeadHeight = tree.getHeaderHeight();
+		}
+		
 		fOldYPos = Integer.MIN_VALUE;
 		for (int i = 0; i < items.length; i++) {
 			collectTreeItemsRek(items[i]);
