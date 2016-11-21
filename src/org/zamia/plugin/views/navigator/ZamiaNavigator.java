@@ -243,8 +243,11 @@ public class ZamiaNavigator extends CommonNavigator {
 					Display d = Display.getDefault();
 					d.asyncExec(new Runnable() {
 						public void run() {
-							ZamiaNavigator navigator = ZamiaPlugin.findView(ZamiaNavigator.VIEW_ID); 
-							navigator.refresh();
+							ZamiaNavigator navigator = ZamiaPlugin.findView(ZamiaNavigator.VIEW_ID);
+							if(navigator != null)
+							{	
+								navigator.refresh();
+							}
 						}
 					});
 				} catch (Throwable t) {

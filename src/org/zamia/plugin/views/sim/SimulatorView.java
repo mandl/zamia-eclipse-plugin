@@ -1124,7 +1124,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 				fSelectedItem = null;
 
 				TreeItem[] items = fTree.getItems();
-				int hh = Util.isMotif() ? 0 : fTree.getHeaderHeight();
+				int hh = getHeaderHeight();
 				for (int i = 0; i < items.length; i++) {
 					TreeItem item = items[i];
 
@@ -1552,6 +1552,12 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 				fConfig = fNewConfig;
 
 				int sim = fConfig.getSimulator();
+				IProject myProject = fConfig.getProject();
+				if(myProject.isOpen() == false )
+				{
+					ZamiaPlugin.showError(null,"Fail", "Project "+ myProject.getName() + " is not open", "");
+					return Status.CANCEL_STATUS;
+				}	
 
 				DMUID tlDUUID = fConfig.getToplevel();
 				// String libId = tlDUUID.getLibId();
@@ -1658,7 +1664,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 					} catch (Exception e) {
 						el.logException(e);
-						ZamiaPlugin.showError(fControl.getShell(), "Error while importing VCD File", "While parsing the VCD file\n" + filename + "\nan error occured:\n" + e, "unknown.");
+						ZamiaPlugin.showError(null, "Error while importing VCD File", "While parsing the VCD file\n" + filename + "\nan error occured:\n" + e, "unknown.");
 						fSimulator = null;
 					}
 				}
@@ -2446,7 +2452,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		}
 	
 		if (aSelectedTraces.contains(aTreeItem.getData())) {
-			int hh = Util.isMotif() ? 0 : fTree.getHeaderHeight();
+			int hh = getHeaderHeight();
 			Rectangle clientArea = fWaveformCanvas.getClientArea();
 	
 			Rectangle r = aTreeItem.getBounds(0);
@@ -2457,6 +2463,28 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 	
 			aGC.fillRectangle(0, ypos, clientArea.width, r.height);
 		}
+	}
+
+	private int getHeaderHeight() {
+		
+		int hh;
+		if (Util.isMotif()== true)
+		{
+			hh = 0;
+		}
+		else if (Util.isGtk())
+		{
+			hh = 0;
+		}
+		else if (Util.isCocoa() == true)
+		{
+			hh = fTree.getHeaderHeight();
+		}
+		else
+		{
+			hh = fTree.getHeaderHeight();
+		}
+		return hh;
 	}
 	
 	public String getSignalValueStr(PathName aSignalPath, BigInteger aTime) {
