@@ -93,13 +93,20 @@ public class TraceLineMarkers extends TraceLine {
 
 			int x = aViewer.tX(marker.getTime().subtract(aTimeOffset));
 			marker.setX(x);
+			
+			BigInteger a = new BigInteger("1000000");
+			String timeLabel = marker.getTime().divide(a).toString();
 
+			// calculate text width
 			Point box = aGC.textExtent(marker.getLabel());
-
-			int width = box.x + 2 + minusIconWidth;
+			Point box2 = aGC.textExtent(timeLabel);
+			int space = 7;
+			int width = box2.x + box.x + 2 + minusIconWidth + space;
 			marker.setWidth(width);
 
 			aGC.fillRectangle(x, aYOffset, width, box.y + 2);
+
+			aGC.drawText(timeLabel, x + 1 + minusIconWidth + box.x + space, aYOffset + 1);
 
 			aGC.drawText(marker.getLabel(), x + 1 + minusIconWidth, aYOffset + 1);
 
