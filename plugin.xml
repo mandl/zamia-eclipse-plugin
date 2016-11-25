@@ -425,7 +425,7 @@
         	class="org.zamia.plugin.ui.NewFileWizard"
         	icon="share/images/source.gif"
         	category="org.zamia.plugin.newWizards"
-        	name="Source File"
+        	name="VHDL Source File"
         	id="org.zamia.plugin.NewFileWizard">
         <description>Create a new zamiaCAD file (vhdl, vhd, v).</description>
         </wizard>
