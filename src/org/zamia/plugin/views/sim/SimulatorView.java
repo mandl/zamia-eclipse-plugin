@@ -2513,6 +2513,12 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 	private void startCanvasPaintJob() {
 
 		Rectangle clientArea = fWaveformCanvas.getClientArea();
+		
+		if (clientArea.width <= 0 || clientArea.height <= 0) {
+			
+			// no paint
+			return;
+		}
 
 		WaveformPaintJob job = new WaveformPaintJob(this, clientArea);
 
