@@ -30,7 +30,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: bin/,
  .,
- native/,
  share/,
  share/jars/commons-cli-1.0.jar,
  share/jars/commons-logging-1.0.4.jar,
