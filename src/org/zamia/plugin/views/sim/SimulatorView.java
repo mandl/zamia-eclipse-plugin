@@ -64,6 +64,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -404,6 +406,23 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		int height = fm.getHeight();
 		fRunText.setLayoutData(new GridData(width, height));
 		fRunText.setText("100");
+		fRunText.addVerifyListener(new VerifyListener() {
+			  @Override
+			  public void verifyText(VerifyEvent e) {
+				  String allowedCharacters = "0123456789";
+				    String text = e.text;
+				    for (int index = 0; index < text.length(); index++) {
+				        char character = text.charAt(index);
+				        boolean isAllowed = allowedCharacters.indexOf(character) > -1;
+				        if (!isAllowed) {
+				            e.doit = false;
+				            return;
+				        }
+				    }
+			  }
+			});
+
+
 
 		fTimeUnitCombo = new CCombo(comp, SWT.READ_ONLY | SWT.BORDER);
 		fTimeUnitCombo.setItems(new String[]{"s", "ms", "\u00B5s", "ns"});
