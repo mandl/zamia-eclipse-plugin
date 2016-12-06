@@ -33,5 +33,9 @@ public class PreferenceConstants {
 	public static final String P_MODULE_LABEL = "ModuleLabelColorPref"; //$NON-NLS-1$
 
 	public static final String P_HILIGHT = "HilightColorPref"; //$NON-NLS-1$
+	
+	public static final String P_MARKER_LABEL = "Show Maker Time"; //$NON-NLS-1$
+	
+
 
 }
