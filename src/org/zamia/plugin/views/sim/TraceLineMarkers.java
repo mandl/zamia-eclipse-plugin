@@ -14,12 +14,16 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.zamia.ZamiaException;
 import org.zamia.instgraph.sim.IGISimCursor;
+import org.zamia.plugin.ZamiaPlugin;
+import org.zamia.plugin.preferences.PreferenceConstants;
 
 
 /**
@@ -31,6 +35,8 @@ import org.zamia.instgraph.sim.IGISimCursor;
 public class TraceLineMarkers extends TraceLine {
 
 	public final static int MARKER_WIDTH = 320;
+	
+	public boolean drawTime;
 
 	private TreeMap<BigInteger, TraceLineMarker> fMarkers;
 
@@ -39,6 +45,9 @@ public class TraceLineMarkers extends TraceLine {
 	public TraceLineMarkers(String aLabel, int aColor) {
 		super(aLabel, aColor, "TLM:" + aLabel);
 		fMarkers = new TreeMap<BigInteger, TraceLineMarker>();
+		  IPreferenceStore preferenceStore = ZamiaPlugin.getDefault().getPreferenceStore();
+		  drawTime = preferenceStore.getBoolean(PreferenceConstants.P_MARKER_LABEL);
+		
 	}
 
 	public void addMarker(BigInteger aTime, String aLabel) {
@@ -101,13 +110,23 @@ public class TraceLineMarkers extends TraceLine {
 			Point box = aGC.textExtent(marker.getLabel());
 			Point box2 = aGC.textExtent(timeLabel);
 			int space = 7;
-			int width = box2.x + box.x + 2 + minusIconWidth + space;
+			int width;
+			if (drawTime == true)
+			{
+				width = box2.x + box.x + 2 + minusIconWidth + space;
+			}
+			else
+			{
+				width = box.x + 2 + minusIconWidth + space;
+			}
 			marker.setWidth(width);
 
 			aGC.fillRectangle(x, aYOffset, width, box.y + 2);
 
-			aGC.drawText(timeLabel, x + 1 + minusIconWidth + box.x + space, aYOffset + 1);
-
+			if (drawTime == true)
+			{	
+				aGC.drawText(timeLabel, x + 1 + minusIconWidth + box.x + space, aYOffset + 1);
+			}
 			aGC.drawText(marker.getLabel(), x + 1 + minusIconWidth, aYOffset + 1);
 
 			aGC.drawImage(minusIcon, x + 1, aYOffset);
