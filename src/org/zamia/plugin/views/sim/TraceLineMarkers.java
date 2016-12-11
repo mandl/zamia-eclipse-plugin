@@ -53,6 +53,11 @@ public class TraceLineMarkers extends TraceLine {
 	public void addMarker(BigInteger aTime, String aLabel) {
 		fMarkers.put(aTime, new TraceLineMarker(aTime, aLabel));
 	}
+	public TreeMap<BigInteger, TraceLineMarker> getAllMarkers()
+	{
+		
+		return fMarkers;
+	}
 
 	@Override
 	public void draw(IGISimCursor aCursor, GC aGC, int aXOffset, int aYOffset, int aVisibleWidth, int aHeadHeight, BigInteger aStartTime, BigInteger aTimeOffset,

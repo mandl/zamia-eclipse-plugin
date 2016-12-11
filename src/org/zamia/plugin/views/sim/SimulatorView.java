@@ -37,6 +37,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -797,6 +798,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		column1.setText("Signal");
 		treeColumnLayout.setColumnData(column1, new ColumnWeightData(50, 150, true));
 
+		//column1.setEditingSupport(new FirstNameEditingSupport(viewer));
 		TreeColumn column2 = new TreeColumn(fTree, SWT.LEFT);
 		column2.setText("Value");
 		treeColumnLayout.setColumnData(column2, new ColumnWeightData(50, 4096, true));
@@ -804,6 +806,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		fTree.setHeaderVisible(true);
 		fTree.setRedraw(true);
 		fTree.pack();
+		
+	
 
 		fTree.addMouseListener(new MouseListener() {
 			public void mouseDoubleClick(MouseEvent e) {
@@ -1429,6 +1433,14 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		item.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				doFindReferences(false);
+			}
+
+		});
+		item = new MenuItem(fPopupMenu, SWT.PUSH);
+		item.setText("Add Marker");
+		item.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				doNewMarker();
 			}
 
 		});
@@ -3477,6 +3489,24 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			}
 		}
 	}
+	
+	private void doNewMarker() {
+	
+			TreeItem[] items = fTree.getSelection();
+
+			if (items.length == 0)
+				return;
+			TraceLine tline = (TraceLine) items[0].getData();
+
+			if (tline instanceof TraceLineMarkers) {
+				
+				((TraceLineMarkers) tline).addMarker(fCursorTime, "default");
+				repaint();
+			
+			}
+			
+			
+	}
 
 	private void doFindReferences(boolean aWritersOnly) {
 		try {
@@ -3542,5 +3572,37 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		public boolean isCanceled() {
 			return fProgressMonitor.isCanceled();
 		}
+	}
+	
+	public HashMap<TraceLine, TreeItem> getTraceLineTreeItemMap()
+	{
+		return fTraceLineTreeItemMap;
+	}
+
+	public void getMarkers(ArrayList<TraceLineMarker> fMarkers) {
+		
+		
+		
+		if(fTraceLineTreeItemMap != null)
+		{	
+		fTraceLineTreeItemMap.forEach((k,v)->{ 
+			
+			if(k instanceof TraceLineMarkers)
+			{
+				//TreeMap<BigInteger, TraceLineMarker> my = new TreeMap<BigInteger, TraceLineMarker>();
+				
+				TreeMap<BigInteger, TraceLineMarker> my = ((TraceLineMarkers)k).getAllMarkers();
+				
+				my.forEach((k1,v1)->{
+					
+					fMarkers.add(v1);
+				});
+			
+				
+			}	
+			
+		});
+		}
+		
 	}
 }

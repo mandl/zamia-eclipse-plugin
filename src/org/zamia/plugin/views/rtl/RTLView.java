@@ -8,6 +8,7 @@
 
 package org.zamia.plugin.views.rtl;
 
+import org.apache.log4j.Level;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -711,7 +712,8 @@ public class RTLView extends ViewPart implements ZoomObserver, PaintListener {
 			offset.y = 0;
 
 		if ((offset.x != fOffscreenOffset.x) || (offset.y != fOffscreenOffset.y)) {
-			// System.out.println ("offscreenOffset updated to "+offset);
+			
+			logger.info("offscreenOffset updated to "+offset);
 			fOffscreenValid = false;
 			fOffscreenOffset = offset;
 		}
@@ -748,7 +750,14 @@ public class RTLView extends ViewPart implements ZoomObserver, PaintListener {
 
 		int ox = fVisibleOffset.x - fOffscreenOffset.x;
 		int oy = fVisibleOffset.y - fOffscreenOffset.y;
+		
+		if(ox < 0)
+		{
+			logger.info("Bug");
+		}
 		Rectangle clientRect = fCanvas.getClientArea();
+		logger.info("ox " + ox+ " oy "+oy+ " fVisibleSize.x "+ fVisibleSize.x + " fVisibleSize.y "+fVisibleSize.y+ " clientRect.x "+ clientRect.x + " clientRect.y "+clientRect.y );
+	
 		aPaintEvent.gc.drawImage(fOffscreenImage, ox, oy, fVisibleSize.x, fVisibleSize.y, clientRect.x, clientRect.y, fVisibleSize.x, fVisibleSize.y);
 	}
 
@@ -850,7 +859,7 @@ public class RTLView extends ViewPart implements ZoomObserver, PaintListener {
 
 		fZommedSize.x = tW(fTotalSize.getX() + LEFT_MARGIN + RIGHT_MARGIN);
 		fZommedSize.y = tH(fTotalSize.getY() + TOP_MARGIN + BOTTOM_MARGIN);
-
+		logger.info("handleResize " + fZommedSize.x +  " " + fZommedSize.y);
 		// System.out.println ("handleResize():
 		// visibleSize="+visibleSize.x+"x"+visibleSize.y+",
 		// zoomedSize="+zoomedSize.x+"x"+zoomedSize.y);
@@ -887,6 +896,8 @@ public class RTLView extends ViewPart implements ZoomObserver, PaintListener {
 	public void setRTLModule(RTLModule aRTLM) {
 
 		fRTLM = aRTLM;
+		
+		//logger.setup(Level.INFO);
 
 		fOffscreenValid = false;
 		if (fRTLM != null) {
@@ -907,6 +918,7 @@ public class RTLView extends ViewPart implements ZoomObserver, PaintListener {
 		fZoomWidget.setFactor(1.0); // will call handleResize / canvas.redraw
 
 		fTree.setInput(aRTLM);
+		//fCanvas.redraw();
 
 	}
 
@@ -964,6 +976,7 @@ public class RTLView extends ViewPart implements ZoomObserver, PaintListener {
 			int oy = (int) my;
 
 			fVisibleOffset.y = oy;
+			logger.info("fVisibleOffset.y"+fVisibleOffset.y);
 			vertical.setValues(fVisibleOffset.y, 0, fZommedSize.y, fVisibleSize.y, 8, fVisibleSize.y);
 		}
 
@@ -1017,7 +1030,7 @@ public class RTLView extends ViewPart implements ZoomObserver, PaintListener {
 		fSelectionProvider.clear();
 	}
 
-	private void addHighlight(RTLNode aNode) {
+	public void addHighlight(RTLNode aNode) {
 
 		fSelectionProvider.setNodeSelection(aNode, true);
 
@@ -1069,7 +1082,7 @@ public class RTLView extends ViewPart implements ZoomObserver, PaintListener {
 		doZoom(f, 0.0, 0.0);
 	}
 
-	void addHighlight(RTLSignal aSignal) {
+	public void addHighlight(RTLSignal aSignal) {
 		fSelectionProvider.setSignalSelection(aSignal, true);
 		fOffscreenValid = false;
 		fCanvas.redraw();

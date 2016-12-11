@@ -40,7 +40,7 @@ public class FSMContextMenuProvider extends ContextMenuProvider {
 		menu.appendToGroup(GEFActionConstants.GROUP_UNDO, action);
 
 		action = getActionRegistry().getAction(ActionFactory.DELETE.getId());
-		if (action.isEnabled())
+		//if (action.isEnabled())
 			menu.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
 
 	}

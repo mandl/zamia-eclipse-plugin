@@ -110,7 +110,45 @@
 	        category="org.zamia.plugin"
 	        name="Suspiciousness Scores">
 	    </view>
+  <category
+        id="org.zamia.plugin"
+        name="Sample Category">
+  </category>
+  <view
+        category="org.zamia.plugin"
+        class="org.zamia.plugin.marker.MarkerView"
+        icon="share/images/zamia.gif"
+        id="org.zamia.plugin.marker.MarkerView"
+        name="Marker View">
+  </view>
 	</extension>
+   
+   <extension point="org.eclipse.ui.views">
+      <category
+            name="Zamia"
+            id="org.zamia.plugin"/>
+      <view
+            class="org.zamia.plugin.views.rtl.RTLView"
+            icon="share/images/zamia.gif"
+            category="org.zamia.plugin"
+            name="RTL Graph Viewer"
+            id="org.zamia.plugin.views.rtl.RTLView">
+      </view>
+      <view
+            name="zamiaCAD Navigator"
+            icon="share/images/zamia.gif"
+            category="org.zamia.plugin"
+            class="org.zamia.plugin.views.navigator.ZamiaNavigator"
+            id="org.zamia.plugin.views.navigator.ZamiaNavigator">
+      </view>
+      <view
+            class="org.zamia.plugin.views.sim.SimulatorView"
+            icon="share/images/zamia.gif"
+            category="org.zamia.plugin"
+            name="Simulator"
+            id="org.zamia.plugin.views.sim.SimulatorView">
+      </view>
+   </extension>
 	<extension point="org.eclipse.ui.ide.markerSupport">
 	   <markerContentGenerator id="org.zamia.debugMarkerView.contentGenerator" name="My Marker Generator">
 	        <markerTypeReference id="org.zamia.plugin.debugmarkerpoint"/>
@@ -443,33 +481,6 @@
       </page>
    </extension>
    -->
-   
-   <extension point="org.eclipse.ui.views">
-      <category
-            name="Zamia"
-            id="org.zamia.plugin"/>
-      <view
-            class="org.zamia.plugin.views.rtl.RTLView"
-            icon="share/images/zamia.gif"
-            category="org.zamia.plugin"
-            name="RTL Graph Viewer"
-            id="org.zamia.plugin.views.rtl.RTLView">
-      </view>
-      <view
-            name="zamiaCAD Navigator"
-            icon="share/images/zamia.gif"
-            category="org.zamia.plugin"
-            class="org.zamia.plugin.views.navigator.ZamiaNavigator"
-            id="org.zamia.plugin.views.navigator.ZamiaNavigator">
-      </view>
-      <view
-            class="org.zamia.plugin.views.sim.SimulatorView"
-            icon="share/images/zamia.gif"
-            category="org.zamia.plugin"
-            name="Simulator"
-            id="org.zamia.plugin.views.sim.SimulatorView">
-      </view>
-   </extension>
    
    <extension point="org.eclipse.ui.popupMenus">
    
@@ -1219,12 +1230,12 @@
                value="zamiaCAD">
          </property>
          <property
-               name="preferenceCustomization"
-		           value="plugin_customization.ini">
-         </property>
-         <property
                name="startupProgressRect"
                value="5,275,445,15">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
          </property>
       </product>
    </extension>
@@ -1306,6 +1317,36 @@
         </command>
      	</menuContribution>
 	</extension>
+ <extension
+       point="org.eclipse.ui.perspectiveExtensions">
+    <perspectiveExtension
+          targetID="org.eclipse.jdt.ui.JavaPerspective">
+       <view
+             id="org.zamia.plugin.views.SampleView"
+             ratio="0.5"
+             relationship="right"
+             relative="org.eclipse.ui.views.ProblemView">
+       </view>
+    </perspectiveExtension>
+    <perspectiveExtension
+          targetID="org.eclipse.jdt.ui.JavaPerspective">
+       <view
+             id="org.zamia.plugin.marker.MarkerView"
+             ratio="0.5"
+             relationship="right"
+             relative="org.eclipse.ui.views.ProblemView">
+       </view>
+    </perspectiveExtension>
+ </extension>
+ <extension
+       point="org.eclipse.help.contexts">
+    <contexts
+          file="contexts.xml">
+    </contexts>
+    <contexts
+          file="contexts.xml">
+    </contexts>
+ </extension>
 
 
 </plugin>

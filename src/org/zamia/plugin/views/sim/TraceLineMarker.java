@@ -34,6 +34,7 @@ public class TraceLineMarker {
 	public BigInteger getTime() {
 		return fTime;
 	}
+	
 
 	public void setTime(BigInteger aTime) {
 		fTime = aTime;
