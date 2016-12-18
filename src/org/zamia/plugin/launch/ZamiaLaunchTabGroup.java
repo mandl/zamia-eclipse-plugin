@@ -28,8 +28,8 @@ public class ZamiaLaunchTabGroup extends AbstractLaunchConfigurationTabGroup {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
             mainTab,
 			//new ArgumentsTab(PydevPlugin.getPythonInterpreterManager(), mainModuleTab),          
-			new RefreshTab(),
-			new EnvironmentTab(),
+			//new RefreshTab(),
+			//new EnvironmentTab(),
 			new CommonTab()	};
 		setTabs(tabs);
 	}

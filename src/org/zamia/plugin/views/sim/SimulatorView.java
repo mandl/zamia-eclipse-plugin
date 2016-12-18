@@ -31,8 +31,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -63,6 +68,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -122,6 +129,7 @@ import org.zamia.plugin.editors.DebugReportVisualizer;
 import org.zamia.plugin.editors.ReferenceSearchAction;
 import org.zamia.plugin.editors.ZamiaEditor;
 import org.zamia.plugin.launch.SimRunnerConfig;
+import org.zamia.plugin.preferences.PreferenceConstants;
 import org.zamia.plugin.search.ReferencesSearchQuery;
 import org.zamia.util.PathName;
 import org.zamia.vhdl.ast.DMUID;
@@ -149,10 +157,11 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 	private IGISimulator fSimulator;
 
 	private ValueForcer fValueForcer;
-	
+
 	private TraceDialog fTraceDialog;
 
-	private ToolItem fTraceTI, fUnTraceTI, fNewLineTI, fRunTI, fRestartTI, fJobTI, fStopTI, fPrevTransTI, fNextTransTI, fGotoCycleTI, fCoverageTI, fStaticAnalysisTI;
+	private ToolItem fTraceTI, fUnTraceTI, fNewLineTI, fRunTI, fRestartTI, fJobTI, fStopTI, fPrevTransTI, fNextTransTI,
+			fGotoCycleTI, fCoverageTI, fStaticAnalysisTI;
 
 	private SimRunnerConfig fConfig;
 
@@ -198,7 +207,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 	private Color fColors[];
 
-	private String[] fColorNames = { "Purple", "Light Gray", "Red", "Light Blue", "Yellow", "Light Green", "Blue", "Gray", "Orange", "Dark Gray", "Light Red", "Brown", "Magenta", "Green", "Cyan", "White" };
+	private String[] fColorNames = { "Purple", "Light Gray", "Red", "Light Blue", "Yellow", "Light Green", "Blue",
+			"Gray", "Orange", "Dark Gray", "Light Red", "Brown", "Magenta", "Green", "Cyan", "White" };
 
 	private Color fYellow, fBlack, fWhite;
 
@@ -221,6 +231,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 	private CCombo fTimeUnitCombo;
 
 	private Shell fShell;
+
+	private boolean drawTime;
 
 	public SimulatorView() throws ZamiaException {
 		fSimJobLock = new ReentrantLock();
@@ -294,9 +306,15 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 						}
 					});
 				} else {
+<<<<<<< HEAD
 					logger.info("No more transitions " + fNewTime.toString() + " " + fSimulator.getEndTime());
 					
 					//ZamiaPlugin.showError(getSite().getShell(), "No more transitions found.", "No transition found.", "Signal doesn't have further transitions.");
+=======
+					// ZamiaPlugin.showError(getSite().getShell(), "No more
+					// transitions found.", "No transition found.", "Signal
+					// doesn't have further transitions.");
+>>>>>>> 57736ae1703b3423d58cc1cb7bed037e115e9dd8
 					fDisplay.syncExec(new Runnable() {
 						public void run() {
 							fDisplay.beep();
@@ -317,22 +335,50 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 	Color getBlack() {
 		return fBlack;
 	}
-	
+
 	public Font setBold(Font font, boolean bold) {
 		FontData[] fD = font.getFontData();
 		fD[0].setStyle(bold ? SWT.BOLD : 0);
-		return new Font(fDisplay,fD[0]);
+		return new Font(fDisplay, fD[0]);
+	}
+	
+	private void updateMarker(boolean drawTime)
+	{
+		
+		fTraceLineTreeItemMap.forEach((k,v)->{ 
+			
+			if(k instanceof TraceLineMarkers)
+			{
+				TraceLineMarkers a = (TraceLineMarkers)k;
+				a.drawTime = drawTime;
+			}	
+			
+		});
+		repaint();
+		
 	}
 
 	public void createPartControl(Composite aParent) {
 
+		IPreferenceStore preferenceStore = ZamiaPlugin.getDefault().getPreferenceStore();
+		drawTime = preferenceStore.getBoolean(PreferenceConstants.P_MARKER_LABEL);
+
+		ZamiaPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty() == PreferenceConstants.P_MARKER_LABEL) {
+					drawTime = (boolean) event.getNewValue();
+					updateMarker(drawTime);
+				}
+			}
+		});
 		fDisplay = aParent.getDisplay();
 		fShell = aParent.getShell();
 
 		fYellow = fDisplay.getSystemColor(SWT.COLOR_YELLOW);
 		fBlack = fDisplay.getSystemColor(SWT.COLOR_BLACK);
 		fWhite = new Color(fDisplay, 50, 50, 50);
-		
+
 		fMinusIcon = ZamiaPlugin.getImage("/share/images/minus.gif");
 
 		fColors = new Color[16];
@@ -406,9 +452,24 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		int height = fm.getHeight();
 		fRunText.setLayoutData(new GridData(width, height));
 		fRunText.setText("100");
+		fRunText.addVerifyListener(new VerifyListener() {
+			@Override
+			public void verifyText(VerifyEvent e) {
+				String allowedCharacters = "0123456789";
+				String text = e.text;
+				for (int index = 0; index < text.length(); index++) {
+					char character = text.charAt(index);
+					boolean isAllowed = allowedCharacters.indexOf(character) > -1;
+					if (!isAllowed) {
+						e.doit = false;
+						return;
+					}
+				}
+			}
+		});
 
 		fTimeUnitCombo = new CCombo(comp, SWT.READ_ONLY | SWT.BORDER);
-		fTimeUnitCombo.setItems(new String[]{"s", "ms", "\u00B5s", "ns"});
+		fTimeUnitCombo.setItems(new String[] { "s", "ms", "\u00B5s", "ns" });
 		fTimeUnitCombo.select(3);
 
 		ToolBar tb = new ToolBar(comp, SWT.FLAT);
@@ -425,17 +486,17 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 				double factor;
 				switch (fTimeUnitCombo.getSelectionIndex()) {
-					case 0:
-						factor = 1000000000000000.0;
-						break;
-					case 1:
-						factor = 1000000000000.0;
-						break;
-					case 2:
-						factor = 1000000000.0;
-						break;
-					default:
-						factor = 1000000.0;
+				case 0:
+					factor = 1000000000000000.0;
+					break;
+				case 1:
+					factor = 1000000000000.0;
+					break;
+				case 2:
+					factor = 1000000000.0;
+					break;
+				default:
+					factor = 1000000.0;
 				}
 				BigInteger aTime = new BigInteger(str).multiply(BigInteger.valueOf((long) factor));
 
@@ -472,7 +533,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 							fSimulator.reset();
 						} catch (ZamiaException e2) {
 							el.logException(e2);
-							ZamiaPlugin.showError(getSite().getShell(), "Simulator Error", "Simulator exception caught", e2.toString());
+							ZamiaPlugin.showError(getSite().getShell(), "Simulator Error", "Simulator exception caught",
+									e2.toString());
 						}
 						return Status.OK_STATUS;
 					}
@@ -726,6 +788,10 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		fTree = new Tree(treeComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		fTree.setLinesVisible(true);
 
+		if (Util.isCocoa()) {
+			Font terminalFont = JFaceResources.getFont(JFaceResources.TEXT_FONT);
+			fTree.setFont(terminalFont);
+		}
 		if (Util.isMotif()) {
 			// dark gray because motif uses black as highlight color
 			Color bg = new Color(fDisplay, 80, 80, 80);
@@ -739,6 +805,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		column1.setText("Signal");
 		treeColumnLayout.setColumnData(column1, new ColumnWeightData(50, 150, true));
 
+		//column1.setEditingSupport(new FirstNameEditingSupport(viewer));
 		TreeColumn column2 = new TreeColumn(fTree, SWT.LEFT);
 		column2.setText("Value");
 		treeColumnLayout.setColumnData(column2, new ColumnWeightData(50, 4096, true));
@@ -746,6 +813,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		fTree.setHeaderVisible(true);
 		fTree.setRedraw(true);
 		fTree.pack();
+		
+	
 
 		fTree.addMouseListener(new MouseListener() {
 			public void mouseDoubleClick(MouseEvent e) {
@@ -773,7 +842,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 			public void widgetSelected(SelectionEvent aE) {
 				moveCursor(fCursorTime);
-				//repaint();
+				// repaint();
 			}
 		});
 
@@ -811,12 +880,14 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 						gotoTransition(true);
 						aE.doit = false;
 
-					} else if (aE.keyCode == SWT.KEYPAD_ADD || aE.keyCode == 'I' || aE.keyCode == 'i' || aE.keyCode == '+') {
+					} else if (aE.keyCode == SWT.KEYPAD_ADD || aE.keyCode == 'I' || aE.keyCode == 'i'
+							|| aE.keyCode == '+') {
 
 						zoomIn();
 						aE.doit = false;
 
-					} else if (aE.keyCode == SWT.KEYPAD_SUBTRACT || aE.keyCode == 'O' || aE.keyCode == 'o' || aE.keyCode == '-') {
+					} else if (aE.keyCode == SWT.KEYPAD_SUBTRACT || aE.keyCode == 'O' || aE.keyCode == 'o'
+							|| aE.keyCode == '-') {
 
 						zoomOut();
 						aE.doit = false;
@@ -877,7 +948,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		source.addDragListener(new DragSourceAdapter() {
 			public void dragSetData(DragSourceEvent event) {
 
-				//DragSource ds = (DragSource) event.widget;
+				// DragSource ds = (DragSource) event.widget;
 
 				ArrayList<TraceLine> selection = getSelectedTraces();
 
@@ -1082,7 +1153,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 						label = new Label(tip, SWT.NONE);
 						label.setForeground(fDisplay.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 						label.setBackground(fDisplay.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-						//label.setData("_TABLEITEM", item);
+						// label.setData("_TABLEITEM", item);
 						label.setText(tl.getToolTip());
 						label.addListener(SWT.MouseExit, labelListener);
 						label.addListener(SWT.MouseDown, labelListener);
@@ -1103,7 +1174,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 		createPopupMenu();
 
-		fWaveformCanvas = new Canvas(sash, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE | SWT.DOUBLE_BUFFERED);
+		fWaveformCanvas = new Canvas(sash,
+				SWT.V_SCROLL | SWT.H_SCROLL | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE | SWT.DOUBLE_BUFFERED);
 		fWaveformCanvas.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent event) {
 				handleResize();
@@ -1151,12 +1223,13 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 						if (marker != null) {
 							int xdiff = aEvent.x - marker.getX();
 
-							//logger.info("xdiff: %d", xdiff);
+							// logger.info("xdiff: %d", xdiff);
 
 							if (xdiff >= 0 && xdiff <= 16) {
 								tlm.delete(marker);
 							} else {
-								String label = ZamiaPlugin.inputDialog(getSite().getShell(), "Marker Label", "Please enter a new label for the marker:", marker.getLabel());
+								String label = ZamiaPlugin.inputDialog(getSite().getShell(), "Marker Label",
+										"Please enter a new label for the marker:", marker.getLabel());
 
 								if (label == null || label.length() < 1) {
 									return;
@@ -1231,9 +1304,9 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 				scrollVertically((ScrollBar) event.widget);
 			}
 		});
-		
+
 		fTree.addSelectionListener(new SelectionAdapter() {
-			
+
 			void bold(TreeItem[] items) {
 				for (TreeItem item : items) {
 					boolean bold = Arrays.asList(fTree.getSelection()).contains(item);
@@ -1242,7 +1315,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 					bold(item.getItems());
 				}
 			}
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				bold(fTree.getItems());
@@ -1371,6 +1444,14 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 		});
 		item = new MenuItem(fPopupMenu, SWT.PUSH);
+		item.setText("Add Marker");
+		item.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				doNewMarker();
+			}
+
+		});
+		item = new MenuItem(fPopupMenu, SWT.PUSH);
 		item.setText("Find Drivers CTRL+SHIFT+H");
 		item.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -1449,7 +1530,9 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 	private void doUnforceAllFromCursor(BigInteger aFromTime) {
 		if (!(fSimulator instanceof IGSimRef)) {
-			ZamiaPlugin.showError(getSite().getShell(), "Unsupported Simulator", "New values can be unforced in Built-In simulator only", "Unforcing all forced values in a read-only simulator");
+			ZamiaPlugin.showError(getSite().getShell(), "Unsupported Simulator",
+					"New values can be unforced in Built-In simulator only",
+					"Unforcing all forced values in a read-only simulator");
 			return;
 		}
 
@@ -1460,7 +1543,9 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 	private void doUnforceFromCursor(BigInteger aFromTime) {
 		if (!(fSimulator instanceof IGSimRef)) {
-			ZamiaPlugin.showError(getSite().getShell(), "Unsupported Simulator", "New values can be unforced in Built-In simulator only", "Unforcing forced values for selected signals in a read-only simulator");
+			ZamiaPlugin.showError(getSite().getShell(), "Unsupported Simulator",
+					"New values can be unforced in Built-In simulator only",
+					"Unforcing forced values for selected signals in a read-only simulator");
 			return;
 		}
 
@@ -1485,7 +1570,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 	private void doForceValue() {
 
 		if (!(fSimulator instanceof IGSimRef)) {
-			ZamiaPlugin.showError(getSite().getShell(), "Unsupported Simulator", "New values can be forced in Built-In simulator only", "Forcing value in a read-only simulator");
+			ZamiaPlugin.showError(getSite().getShell(), "Unsupported Simulator",
+					"New values can be forced in Built-In simulator only", "Forcing value in a read-only simulator");
 			return;
 		}
 
@@ -1556,11 +1642,10 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 				int sim = fConfig.getSimulator();
 				IProject myProject = fConfig.getProject();
-				if(myProject.isOpen() == false )
-				{
-					ZamiaPlugin.showError(null,"Fail", "Project "+ myProject.getName() + " is not open", "");
+				if (myProject.isOpen() == false) {
+					ZamiaPlugin.showError(null, "Fail", "Project " + myProject.getName() + " is not open", "");
 					return Status.CANCEL_STATUS;
-				}	
+				}
 
 				DMUID tlDUUID = fConfig.getToplevel();
 				// String libId = tlDUUID.getLibId();
@@ -1595,7 +1680,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 					} catch (Exception e) {
 						el.logException(e);
-						ZamiaPlugin.showError(getSite().getShell(), "Failed to load Built-In simulator", "Failed to load Built-In simulator", e.toString());
+						ZamiaPlugin.showError(getSite().getShell(), "Failed to load Built-In simulator",
+								"Failed to load Built-In simulator", e.toString());
 						fSimulator = null;
 					}
 
@@ -1667,7 +1753,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 					} catch (Exception e) {
 						el.logException(e);
-						ZamiaPlugin.showError(null, "Error while importing VCD File", "While parsing the VCD file\n" + filename + "\nan error occured:\n" + e, "unknown.");
+						ZamiaPlugin.showError(null, "Error while importing VCD File",
+								"While parsing the VCD file\n" + filename + "\nan error occured:\n" + e, "unknown.");
 						fSimulator = null;
 					}
 				}
@@ -1746,7 +1833,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 				enableStopBtn(true);
 
 				if (fSimulator instanceof IGSimRef) {
-					((IGSimRef) fSimulator).setMonitor(new EclipseProgressMonitor(fSimulator.getEndTime(), fTime, 100, iProgressMonitor));
+					((IGSimRef) fSimulator).setMonitor(
+							new EclipseProgressMonitor(fSimulator.getEndTime(), fTime, 100, iProgressMonitor));
 				}
 				fSimulator.run(fTime);
 
@@ -1754,7 +1842,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 			} catch (ZamiaException e) {
 				el.logException(e);
-				ZamiaPlugin.showError(getSite().getShell(), "Simulator Error", "Simulator exception caught", e.toString());
+				ZamiaPlugin.showError(getSite().getShell(), "Simulator Error", "Simulator exception caught",
+						e.toString());
 			}
 			return Status.OK_STATUS;
 		}
@@ -1788,7 +1877,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			showSource(tls.getSignalPath());
 		} else if (aTL instanceof TraceLineMarkers) {
 
-			String label = ZamiaPlugin.inputDialog(getSite().getShell(), "Marker Label", "Please enter a label for the new marker:", "");
+			String label = ZamiaPlugin.inputDialog(getSite().getShell(), "Marker Label",
+					"Please enter a label for the new marker:", "");
 
 			if (label == null || label.length() < 1) {
 				return;
@@ -1866,7 +1956,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			IGTypeStatic type = getSignalType(path);
 
 			if (type == null) {
-				logger.error("SimulatorView: Was asked to add trace for %s, but failed to compute a type for it.", path);
+				logger.error("SimulatorView: Was asked to add trace for %s, but failed to compute a type for it.",
+						path);
 				return;
 			}
 
@@ -1874,11 +1965,11 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 			try {
 				fSimulator.trace(path);
-				
+
 				ArrayList<TraceLine> sel = getSelectedTraces();
 				int n = sel.size();
 				TraceLine parent = null;
-				for (int i = 0; i<n; i++) {
+				for (int i = 0; i < n; i++) {
 					TraceLine tl = sel.get(i);
 					if (tl instanceof TraceLineMarkers) {
 						parent = tl;
@@ -1893,7 +1984,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			}
 
 		} else {
-			ZamiaPlugin.showError(getSite().getShell(), "No simulator", "Please launch a simulator first.", "Sim viewer is disconnected.");
+			ZamiaPlugin.showError(getSite().getShell(), "No simulator", "Please launch a simulator first.",
+					"Sim viewer is disconnected.");
 		}
 	}
 
@@ -1921,7 +2013,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 		long ct = getCursorTime().divide(fsPerUnit).longValue();
 
-		String timeStr = ZamiaPlugin.inputDialog(getSite().getShell(), "Enter Time", "Time to move cursor to:", "" + ct);
+		String timeStr = ZamiaPlugin.inputDialog(getSite().getShell(), "Enter Time", "Time to move cursor to:",
+				"" + ct);
 
 		if (timeStr == null) {
 			return;
@@ -1954,13 +2047,16 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			int n = sel.size();
 
 			if (n != 1) {
-				ZamiaPlugin.showError(getSite().getShell(), "Selection Error", "Please select exactly one signal", "Multiple/no signals selected");
+				ZamiaPlugin.showError(getSite().getShell(), "Selection Error", "Please select exactly one signal",
+						"Multiple/no signals selected");
 				return;
 			}
 
 			TraceLine tl = sel.get(0);
 
-			String sliceStr = ZamiaPlugin.inputDialog(getSite().getShell(), "Enter Slice", "Please specify the array range (slice) to trace,\nfor a single element specify its index, e.g. 23 or 42\nfor a slice specify the range, e.g. 23:42", "");
+			String sliceStr = ZamiaPlugin.inputDialog(getSite().getShell(), "Enter Slice",
+					"Please specify the array range (slice) to trace,\nfor a single element specify its index, e.g. 23 or 42\nfor a slice specify the range, e.g. 23:42",
+					"");
 
 			if (sliceStr == null) {
 				return;
@@ -1971,7 +2067,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			if (sliceStr.contains(":")) {
 				String[] parts = sliceStr.split(":");
 				if (parts.length != 2) {
-					ZamiaPlugin.showError(getSite().getShell(), "Slice String Parse Error", "Failed to parse " + sliceStr, "Wrong number of boundaries given.");
+					ZamiaPlugin.showError(getSite().getShell(), "Slice String Parse Error",
+							"Failed to parse " + sliceStr, "Wrong number of boundaries given.");
 					return;
 				}
 				try {
@@ -1985,7 +2082,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 					}
 
 				} catch (Throwable t) {
-					ZamiaPlugin.showError(getSite().getShell(), "Slice String Parse Error", "Failed to parse " + sliceStr, t.toString());
+					ZamiaPlugin.showError(getSite().getShell(), "Slice String Parse Error",
+							"Failed to parse " + sliceStr, t.toString());
 					return;
 				}
 
@@ -1994,7 +2092,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 					min = Integer.parseInt(sliceStr);
 					max = min;
 				} catch (Throwable t) {
-					ZamiaPlugin.showError(getSite().getShell(), "Slice String Parse Error", "Failed to parse " + sliceStr, t.toString());
+					ZamiaPlugin.showError(getSite().getShell(), "Slice String Parse Error",
+							"Failed to parse " + sliceStr, t.toString());
 					return;
 				}
 			}
@@ -2005,7 +2104,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			repaint();
 		} catch (Throwable t) {
 			el.logException(t);
-			ZamiaPlugin.showError(getSite().getShell(), "Exception caught", "Exception caught - see log for details.", t.toString());
+			ZamiaPlugin.showError(getSite().getShell(), "Exception caught", "Exception caught - see log for details.",
+					t.toString());
 			return;
 		}
 	}
@@ -2060,7 +2160,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 	}
 
 	private void doNewLine() {
-		String label = ZamiaPlugin.inputDialog(getSite().getShell(), "Marker Line Label", "Please enter a label for the new marker line:", "New marker line");
+		String label = ZamiaPlugin.inputDialog(getSite().getShell(), "Marker Line Label",
+				"Please enter a label for the new marker line:", "New marker line");
 		if (label == null) {
 			return;
 		}
@@ -2091,7 +2192,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 	private void doStaticAnalysis() {
 
-		//todo: do static analysis and collect SourceRanges to be highlighted
+		// todo: do static analysis and collect SourceRanges to be highlighted
 
 		if (doShowStaticAnalysis()) {
 
@@ -2354,98 +2455,99 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 	private void paintWaveformCanvas(PaintEvent aPaintEvent) {
 		if (fOffscreenLock.tryLock())
-		try {
-		GC gc = aPaintEvent.gc;
+			try {
+				GC gc = aPaintEvent.gc;
 
-		Rectangle clientArea = fWaveformCanvas.getClientArea();
-		gc.setClipping(clientArea);
+				Rectangle clientArea = fWaveformCanvas.getClientArea();
+				gc.setClipping(clientArea);
 
-		if (fOffscreenImage == null) {
-			gc.setBackground(fDisplay.getSystemColor(SWT.COLOR_BLACK));
-			gc.setForeground(fDisplay.getSystemColor(SWT.COLOR_GREEN));
-			gc.fillRectangle(0, 0, clientArea.width, clientArea.height);
+				if (fOffscreenImage == null) {
+					gc.setBackground(fDisplay.getSystemColor(SWT.COLOR_BLACK));
+					gc.setForeground(fDisplay.getSystemColor(SWT.COLOR_GREEN));
+					gc.fillRectangle(0, 0, clientArea.width, clientArea.height);
 
-			gc.drawText("No Data", 20, clientArea.height / 2);
-		} else {
+					gc.drawText("No Data", 20, clientArea.height / 2);
+				} else {
 
-			int w = fOffscreenImage.getBounds().width > clientArea.width ? clientArea.width : fOffscreenImage.getBounds().width;
-			int h = fOffscreenImage.getBounds().height > clientArea.height ? clientArea.height : fOffscreenImage.getBounds().height;
+					int w = fOffscreenImage.getBounds().width > clientArea.width ? clientArea.width
+							: fOffscreenImage.getBounds().width;
+					int h = fOffscreenImage.getBounds().height > clientArea.height ? clientArea.height
+							: fOffscreenImage.getBounds().height;
 
-			gc.drawImage(fOffscreenImage, 0, 0, w, h, 0, 0, w, h);
+					gc.drawImage(fOffscreenImage, 0, 0, w, h, 0, 0, w, h);
 
-			/*
-			 * Highlight selected traces
-			 */
-			
-			TreeItem[] sitems = fTree.getSelection();
-			HashSet<TraceLine> selectedTraces = new HashSet<TraceLine>();
-			for (int i = 0; i < sitems.length; i++) {
-				TraceLine tl = (TraceLine) sitems[i].getData();
-				selectedTraces.add(tl);
+					/*
+					 * Highlight selected traces
+					 */
+
+					TreeItem[] sitems = fTree.getSelection();
+					HashSet<TraceLine> selectedTraces = new HashSet<TraceLine>();
+					for (int i = 0; i < sitems.length; i++) {
+						TraceLine tl = (TraceLine) sitems[i].getData();
+						selectedTraces.add(tl);
+					}
+
+					gc.setAlpha(100);
+
+					TreeItem items[] = fTree.getItems();
+					Color white = new Color(fDisplay, 255, 255, 255);
+					gc.setForeground(white);
+					gc.setBackground(white);
+
+					for (int i = 0; i < items.length; i++) {
+
+						drawHighlight(items[i], selectedTraces, gc);
+
+					}
+
+					gc.setAlpha(255);
+
+					/*
+					 * draw cursor
+					 */
+
+					int textHeight = gc.getFontMetrics().getHeight();
+
+					int cx = tX(fCursorTime) - fXOffset;
+					gc.setAlpha(125);
+					gc.setBackground(fYellow);
+					gc.setForeground(fYellow);
+					gc.fillRectangle(cx - 2, textHeight, 4, clientArea.height - textHeight);
+					gc.setAlpha(255);
+					gc.setBackground(fBlack);
+
+					BigInteger fsPerUnit = BigInteger.valueOf((long) fFSPerUnit);
+					String timeStr = "" + fCursorTime.divide(fsPerUnit) + fUnitName;
+					int timeStrWidth = gc.textExtent(timeStr).x;
+					gc.fillRectangle(cx - timeStrWidth / 2 - 1, 0, timeStrWidth + 2, textHeight);
+					gc.drawText(timeStr, cx - timeStrWidth / 2, 0);
+					gc.drawRectangle(cx - timeStrWidth / 2 - 1, 0, timeStrWidth + 2, textHeight);
+
+					BigInteger timeOffset = tXI(fXOffset);
+					BigInteger endTimeOffset = tXI(fXOffset + fVisibleWidth);
+
+					if (endTimeOffset.compareTo(fStartTime) < 0) {
+						endTimeOffset = fStartTime;
+					}
+					if (endTimeOffset.compareTo(fEndTime) > 0) {
+						endTimeOffset = fEndTime;
+					}
+					if (timeOffset.compareTo(fStartTime) < 0) {
+						timeOffset = fStartTime;
+					}
+					if (timeOffset.compareTo(fEndTime) > 0) {
+						timeOffset = fEndTime;
+					}
+
+				}
+			} finally {
+				fOffscreenLock.unlock();
+
 			}
-			
-			gc.setAlpha(100);
-			
-			TreeItem items[] = fTree.getItems();
-			Color white = new Color(fDisplay, 255, 255, 255);
-			gc.setForeground(white);
-			gc.setBackground(white);
-			
-			for (int i = 0; i < items.length; i++) {
-			
-				drawHighlight(items[i], selectedTraces, gc);
-			
-			}
-			
-			gc.setAlpha(255);
-
-			/*
-			 * draw cursor
-			 */
-
-			int textHeight = gc.getFontMetrics().getHeight();
-
-			int cx = tX(fCursorTime) - fXOffset;
-			gc.setAlpha(125);
-			gc.setBackground(fYellow);
-			gc.setForeground(fYellow);
-			gc.fillRectangle(cx - 2, textHeight, 4, clientArea.height - textHeight);
-			gc.setAlpha(255);
-			gc.setBackground(fBlack);
-
-			BigInteger fsPerUnit = BigInteger.valueOf((long) fFSPerUnit);
-			String timeStr = "" + fCursorTime.divide(fsPerUnit) + fUnitName;
-			int timeStrWidth = gc.textExtent(timeStr).x;
-			gc.fillRectangle(cx - timeStrWidth / 2 - 1, 0, timeStrWidth + 2, textHeight);
-			gc.drawText(timeStr, cx - timeStrWidth / 2, 0);
-			gc.drawRectangle(cx - timeStrWidth / 2 - 1, 0, timeStrWidth + 2, textHeight);
-
-			BigInteger timeOffset = tXI(fXOffset);
-			BigInteger endTimeOffset = tXI(fXOffset + fVisibleWidth);
-
-			if (endTimeOffset.compareTo(fStartTime) < 0) {
-				endTimeOffset = fStartTime;
-			}
-			if (endTimeOffset.compareTo(fEndTime) > 0) {
-				endTimeOffset = fEndTime;
-			}
-			if (timeOffset.compareTo(fStartTime) < 0) {
-				timeOffset = fStartTime;
-			}
-			if (timeOffset.compareTo(fEndTime) > 0) {
-				timeOffset = fEndTime;
-			}
-			
-
-		}
-		} finally {
-			fOffscreenLock.unlock();
-
-		}
 	}
 
 	private void drawHighlight(TreeItem aTreeItem, HashSet<TraceLine> aSelectedTraces, GC aGC) {
-		
+
 		if (aTreeItem.getExpanded()) {
 			int n = aTreeItem.getItemCount();
 			for (int i = 0; i < n; i++) {
@@ -2453,43 +2555,36 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 				drawHighlight(child, aSelectedTraces, aGC);
 			}
 		}
-	
+
 		if (aSelectedTraces.contains(aTreeItem.getData())) {
 			int hh = getHeaderHeight();
 			Rectangle clientArea = fWaveformCanvas.getClientArea();
-	
+
 			Rectangle r = aTreeItem.getBounds(0);
 			int ypos = r.y + hh;
 			if (ypos < 0 || ypos > clientArea.height) {
 				return;
 			}
-	
+
 			aGC.fillRectangle(0, ypos, clientArea.width, r.height);
 		}
 	}
 
 	private int getHeaderHeight() {
-		
+
 		int hh;
-		if (Util.isMotif()== true)
-		{
+		if (Util.isMotif() == true) {
 			hh = 0;
-		}
-		else if (Util.isGtk())
-		{
+		} else if (Util.isGtk()) {
 			hh = 0;
-		}
-		else if (Util.isCocoa() == true)
-		{
+		} else if (Util.isCocoa() == true) {
 			hh = fTree.getHeaderHeight();
-		}
-		else
-		{
+		} else {
 			hh = fTree.getHeaderHeight();
 		}
 		return hh;
 	}
-	
+
 	public String getSignalValueStr(PathName aSignalPath, BigInteger aTime) {
 		try {
 
@@ -2510,6 +2605,12 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 	private void startCanvasPaintJob() {
 
 		Rectangle clientArea = fWaveformCanvas.getClientArea();
+
+		if (clientArea.width <= 0 || clientArea.height <= 0) {
+
+			// no paint
+			return;
+		}
 
 		WaveformPaintJob job = new WaveformPaintJob(this, clientArea);
 
@@ -2600,7 +2701,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			final int oldOffset = fXOffset;
 			final int newOffset = Math.min(aScrollBar.getSelection(), fImageWidth - fVisibleWidth);
 			if (oldOffset != newOffset) {
-				//fWVComposite.update();
+				// fWVComposite.update();
 				fXOffset = newOffset;
 				startCanvasPaintJob();
 			}
@@ -2684,7 +2785,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		return fCursorTime;
 	}
 
-	TraceLineSignal addTraceSignal(TraceLine aParent, PathName aSignalPath, int aColor, TraceDisplayMode aTDM) throws ZamiaException {
+	TraceLineSignal addTraceSignal(TraceLine aParent, PathName aSignalPath, int aColor, TraceDisplayMode aTDM)
+			throws ZamiaException {
 
 		IGTypeStatic type = getSignalType(aSignalPath);
 
@@ -2699,7 +2801,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		return tls;
 	}
 
-	TraceLineSignalRF addTraceRecordField(TraceLine aParent, String aField, int aColor, TraceDisplayMode aTDM) throws ZamiaException {
+	TraceLineSignalRF addTraceRecordField(TraceLine aParent, String aField, int aColor, TraceDisplayMode aTDM)
+			throws ZamiaException {
 		if (aParent == null || !(aParent instanceof TraceLineSignal)) {
 			throw new ZamiaException("SimulatorView: addTraceRecordField: invalid parent: " + aParent);
 		}
@@ -2734,7 +2837,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		return tlsrf;
 	}
 
-	TraceLineSignalArraySlice addTraceSlice(TraceLine aParent, int aMin, int aMax, int aColor, TraceDisplayMode aTDM) throws ZamiaException {
+	TraceLineSignalArraySlice addTraceSlice(TraceLine aParent, int aMin, int aMax, int aColor, TraceDisplayMode aTDM)
+			throws ZamiaException {
 		if (aParent == null || !(aParent instanceof TraceLineSignal)) {
 			throw new ZamiaException("SimulatorView: addTraceRecordField: invalid parent: " + aParent);
 		}
@@ -2771,7 +2875,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		int rangeMax = ascending ? rangeRight.getInt() : rangeLeft.getInt();
 
 		if (min < rangeMin || max > rangeMax) {
-			throw new ZamiaException("SimulatorView: addTraceSlice: Out of bounds. Legal boundary: " + rangeMin + ":" + rangeMax);
+			throw new ZamiaException(
+					"SimulatorView: addTraceSlice: Out of bounds. Legal boundary: " + rangeMin + ":" + rangeMax);
 		}
 
 		if (min != max) {
@@ -2786,8 +2891,10 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 			IGStaticValue leftValue = new IGStaticValueBuilder(rangeLeft, null).setNum(left).buildConstant();
 			IGStaticValue rightValue = new IGStaticValueBuilder(rangeRight, null).setNum(right).buildConstant();
-			//IGStaticValue sliceRange = new IGStaticValueBuilder(range, null).setLeft(leftValue).setRight(rightValue).buildConstant();
-			IGStaticValue sliceRange = new IGStaticValue.RANGE.Builder(range).setLeft(leftValue).setRight(rightValue).buildConstant();
+			// IGStaticValue sliceRange = new IGStaticValueBuilder(range,
+			// null).setLeft(leftValue).setRight(rightValue).buildConstant();
+			IGStaticValue sliceRange = new IGStaticValue.RANGE.Builder(range).setLeft(leftValue).setRight(rightValue)
+					.buildConstant();
 
 			subtype = type.createSubtype(sliceRange, null);
 
@@ -2795,7 +2902,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			subtype = type.getStaticElementType(null);
 		}
 
-		TraceLineSignalArraySlice tlsas = new TraceLineSignalArraySlice(tls, min, max, ascending, aTDM, aColor, subtype);
+		TraceLineSignalArraySlice tlsas = new TraceLineSignalArraySlice(tls, min, max, ascending, aTDM, aColor,
+				subtype);
 
 		addTrace(tlsas, aParent);
 
@@ -2829,7 +2937,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 					int i = 0;
 					while (i < items.length) {
 						if (items[i] == sel) {
-							idx = i+1;
+							idx = i + 1;
 							break;
 						}
 						i++;
@@ -2862,7 +2970,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 							IGTypeStatic subType = type.getStaticRecordFieldType(i);
 
-							TraceLineSignalRF tlsrf = new TraceLineSignalRF(tls, rf.getId(), TraceDisplayMode.HEX, getNextColor(), subType);
+							TraceLineSignalRF tlsrf = new TraceLineSignalRF(tls, rf.getId(), TraceDisplayMode.HEX,
+									getNextColor(), subType);
 
 							addTrace(tlsrf, tls);
 
@@ -2988,7 +3097,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		String[] parts = str.split(":");
 
 		if (parts.length == 2) {
-			// legacy format support 
+			// legacy format support
 			try {
 				PathName signalPath = new PathName(parts[0]);
 				TraceDisplayMode mode = TraceDisplayMode.valueOf(parts[1]);
@@ -3128,15 +3237,15 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 	Image resizeOffscreenImage(Rectangle aClientArea) {
 
-			if (fOffscreenImage != null && !fOffscreenImage.getBounds().equals(aClientArea)) {
-				fOffscreenImage.dispose();
-				fOffscreenImage = null;
-			}
+		if (fOffscreenImage != null && !fOffscreenImage.getBounds().equals(aClientArea)) {
+			fOffscreenImage.dispose();
+			fOffscreenImage = null;
+		}
 
-			if (fOffscreenImage == null) {
-				fOffscreenImage = new Image(fDisplay, aClientArea.width, aClientArea.height);
-			}
-			return fOffscreenImage;
+		if (fOffscreenImage == null) {
+			fOffscreenImage = new Image(fDisplay, aClientArea.width, aClientArea.height);
+		}
+		return fOffscreenImage;
 
 	}
 
@@ -3162,12 +3271,13 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			boolean isFutureSimul = fCursorTime.compareTo(fSimulator.getEndTime()) == 0;
 
 			/* input value */
-			StringBuilder msg = new StringBuilder("Please specify the new value to be forced on signal ").append(aSignalPath);
+			StringBuilder msg = new StringBuilder("Please specify the new value to be forced on signal ")
+					.append(aSignalPath);
 			msg.append("\n\nChange will take place on:  ");
 			if (isFutureSimul) {
 				msg.append("  future simulation");
 			} else {
-				msg.append(fCursorTime.longValue()/fFSPerUnit).append(" ns");
+				msg.append(fCursorTime.longValue() / fFSPerUnit).append(" ns");
 			}
 			String valueStr = ZamiaPlugin.inputDialog(getSite().getShell(), "Enter New Value", msg.toString(), "");
 			if (valueStr == null) {
@@ -3238,10 +3348,11 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 		private IGStaticValue parseValue(String aValueStr, IGTypeStatic aType, PathName aSignalPath) {
 			try {
-				return ((IGSimRef) fSimulator).parseValue(aValueStr, aType,aSignalPath);
+				return ((IGSimRef) fSimulator).parseValue(aValueStr, aType, aSignalPath);
 			} catch (ZamiaException e) {
 				el.logException(e);
-				ZamiaPlugin.showError(getSite().getShell(), "Exception caught", "Exception caught - see log for details.", e.toString());
+				ZamiaPlugin.showError(getSite().getShell(), "Exception caught",
+						"Exception caught - see log for details.", e.toString());
 			}
 			return null;
 		}
@@ -3251,7 +3362,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 				fSimulator.assign(aSignalPath, aValue);
 			} catch (ZamiaException e1) {
 				el.logException(e1);
-				ZamiaPlugin.showError(getSite().getShell(), "Exception caught", "Exception caught - see log for details.", e1.toString());
+				ZamiaPlugin.showError(getSite().getShell(), "Exception caught",
+						"Exception caught - see log for details.", e1.toString());
 				return false;
 			}
 			return true;
@@ -3283,7 +3395,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 			private TreeMap<BigInteger, Forcings> fForcings = new TreeMap<BigInteger, Forcings>();
 			/* Used for iteration only */
-			private Iterator<Map.Entry<BigInteger,Forcings>> fIterator;
+			private Iterator<Map.Entry<BigInteger, Forcings>> fIterator;
 			/* Used for iteration only */
 			private BigInteger fCurForceTime;
 			/* Used for iteration only */
@@ -3344,7 +3456,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 			public class Forcings {
 				private Map<PathName, IGStaticValue> fForcings = new HashMap<PathName, IGStaticValue>();
-				private Iterator<Map.Entry<PathName,IGStaticValue>> fIterator;
+				private Iterator<Map.Entry<PathName, IGStaticValue>> fIterator;
 				private PathName fSignal;
 				private IGStaticValue fValue;
 
@@ -3384,6 +3496,25 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			}
 		}
 	}
+	
+	private void doNewMarker() {
+	
+			TreeItem[] items = fTree.getSelection();
+
+			if (items.length == 0)
+				return;
+			TraceLine tline = (TraceLine) items[0].getData();
+
+			if (tline instanceof TraceLineMarkers) {
+				
+				((TraceLineMarkers) tline).addMarker(fCursorTime, "default");
+				repaint();
+			
+			}
+			
+			
+	}
+
 	private void doFindReferences(boolean aWritersOnly) {
 		try {
 			TreeItem[] items = fTree.getSelection();
@@ -3400,7 +3531,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			TraceLineSignal tls = (TraceLineSignal) tline;
 
 			PathName signalPath = tls.getSignalPath();
-			
+
 			NewSearchUI.activateSearchResultView();
 
 			ZamiaProject zprj = getZamiaProject();
@@ -3417,7 +3548,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 				SourceLocation location = item.computeSourceLocation();
 
-				NewSearchUI.runQueryInBackground(new ReferencesSearchQuery(zprj, path, location, true, true, false, true, aWritersOnly, false));
+				NewSearchUI.runQueryInBackground(
+						new ReferencesSearchQuery(zprj, path, location, true, true, false, true, aWritersOnly, false));
 			}
 
 		} catch (Throwable t) {
@@ -3430,7 +3562,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 		private final IProgressMonitor fProgressMonitor;
 
-		public EclipseProgressMonitor(BigInteger aStartTime, BigInteger aTotalTime, int aSteps, IProgressMonitor aProgressMonitor) {
+		public EclipseProgressMonitor(BigInteger aStartTime, BigInteger aTotalTime, int aSteps,
+				IProgressMonitor aProgressMonitor) {
 			super(aStartTime, aTotalTime, aSteps);
 
 			fProgressMonitor = aProgressMonitor;
@@ -3446,5 +3579,37 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		public boolean isCanceled() {
 			return fProgressMonitor.isCanceled();
 		}
+	}
+	
+	public HashMap<TraceLine, TreeItem> getTraceLineTreeItemMap()
+	{
+		return fTraceLineTreeItemMap;
+	}
+
+	public void getMarkers(ArrayList<TraceLineMarker> fMarkers) {
+		
+		
+		
+		if(fTraceLineTreeItemMap != null)
+		{	
+		fTraceLineTreeItemMap.forEach((k,v)->{ 
+			
+			if(k instanceof TraceLineMarkers)
+			{
+				//TreeMap<BigInteger, TraceLineMarker> my = new TreeMap<BigInteger, TraceLineMarker>();
+				
+				TreeMap<BigInteger, TraceLineMarker> my = ((TraceLineMarkers)k).getAllMarkers();
+				
+				my.forEach((k1,v1)->{
+					
+					fMarkers.add(v1);
+				});
+			
+				
+			}	
+			
+		});
+		}
+		
 	}
 }

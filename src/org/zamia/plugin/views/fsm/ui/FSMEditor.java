@@ -13,6 +13,8 @@ package org.zamia.plugin.views.fsm.ui;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.EventObject;
@@ -227,21 +229,21 @@ public class FSMEditor extends GraphicalEditorWithPalette {
 	protected void setInput(IEditorInput input) {
 		super.setInput(input);
 
-		FSMEditorInput in = (FSMEditorInput) input;
+		//FSMEditorInput in = (FSMEditorInput) input;
 		
-		diagram = in.getDiagram();
+		//diagram = in.getDiagram();
 		
-//		IFile file = ((IFileEditorInput) input).getFile();
-//		try {
-//			InputStream is = file.getContents(false);
-//			ObjectInputStream ois = new ObjectInputStream(is);
-//			diagram = (ActivityDiagram) ois.readObject();
-//			ois.close();
-//		} catch (Exception e) {
-//			// This is just an example. All exceptions caught here.
-//			e.printStackTrace();
-//			diagram = new ActivityDiagram();
-//		}
+		IFile file = ((IFileEditorInput) input).getFile();
+		try {
+			InputStream is = file.getContents(false);
+			ObjectInputStream ois = new ObjectInputStream(is);
+			diagram = (StructuredFSMState) ois.readObject();
+			ois.close();
+		} catch (Exception e) {
+			// This is just an example. All exceptions caught here.
+			e.printStackTrace();
+			diagram = new StructuredFSMState();
+		}
 	}
 
 }

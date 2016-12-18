@@ -6,6 +6,7 @@
  */
 package org.zamia.plugin.preferences;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IEditorPart;
@@ -13,7 +14,6 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.zamia.plugin.ZamiaPlugin;
 import org.zamia.plugin.editors.ZamiaEditor;
 
@@ -44,7 +44,7 @@ public class SyntaxColoringPreferencePage extends FieldEditorPreferencePage impl
 		addField(new ColorFieldEditor(PreferenceConstants.P_SIGNAL, "Signal color", getFieldEditorParent()));
 		addField(new ColorFieldEditor(PreferenceConstants.P_MODULE_LABEL, "Module label color", getFieldEditorParent()));
 		addField(new ColorFieldEditor(PreferenceConstants.P_HILIGHT, "Hilight color", getFieldEditorParent()));
-
+		addField(new BooleanFieldEditor(PreferenceConstants.P_MARKER_LABEL,"Show maker time",getFieldEditorParent()));
 		
 		/*
 		

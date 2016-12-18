@@ -19,6 +19,8 @@ import java.math.BigInteger;
 public class TraceLineMarker {
 
 	private BigInteger fTime;
+	
+	
 
 	private String fLabel;
 
@@ -32,6 +34,7 @@ public class TraceLineMarker {
 	public BigInteger getTime() {
 		return fTime;
 	}
+	
 
 	public void setTime(BigInteger aTime) {
 		fTime = aTime;
