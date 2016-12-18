@@ -305,16 +305,15 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 							moveCursor(fNewTime);
 						}
 					});
-				} else {
-<<<<<<< HEAD
+				} else 
+				{
 					logger.info("No more transitions " + fNewTime.toString() + " " + fSimulator.getEndTime());
 					
 					//ZamiaPlugin.showError(getSite().getShell(), "No more transitions found.", "No transition found.", "Signal doesn't have further transitions.");
-=======
+
 					// ZamiaPlugin.showError(getSite().getShell(), "No more
 					// transitions found.", "No transition found.", "Signal
 					// doesn't have further transitions.");
->>>>>>> 57736ae1703b3423d58cc1cb7bed037e115e9dd8
 					fDisplay.syncExec(new Runnable() {
 						public void run() {
 							fDisplay.beep();
