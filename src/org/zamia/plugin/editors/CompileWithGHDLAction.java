@@ -57,7 +57,7 @@ public class CompileWithGHDLAction implements IEditorActionDelegate {
 		File file = fEditor.getSourceFile().getFile();
 		interpreter.setObject("sourceFile", file);
 		interpreter.setObject("sourceFileFullPath", fullPath);
-
+		logger.info("Compile File: "+ fullPath, null);
 		try {
 			interpreter.evalFile("builtin:/python/ghdl.py");
 			MARKED_EDITORS.add(fullPath);

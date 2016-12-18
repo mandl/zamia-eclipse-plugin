@@ -260,7 +260,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 				for (int i = 0; i < n; i++) {
 
 					TraceLine tl = fTraceLines.get(i);
-
+					
 					if (fGotoNext) {
 						BigInteger t = tl.findNextTransition(cursor, fTime, fEndTime);
 
@@ -285,6 +285,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 				cursor.dispose();
 				cursor = null;
+				logger.info("New: "+fNewTime.toString()+ " Old " + fTime.toString());
 
 				if (fNewTime != null && fNewTime.compareTo(fSimulator.getEndTime()) < 0) {
 					fDisplay.syncExec(new Runnable() {
@@ -293,6 +294,8 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 						}
 					});
 				} else {
+					logger.info("No more transitions " + fNewTime.toString() + " " + fSimulator.getEndTime());
+					
 					//ZamiaPlugin.showError(getSite().getShell(), "No more transitions found.", "No transition found.", "Signal doesn't have further transitions.");
 					fDisplay.syncExec(new Runnable() {
 						public void run() {
@@ -2637,7 +2640,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 	private void moveCursor(BigInteger aTime) {
 
 		BigInteger time = aTime.subtract(aTime.mod(BigInteger.valueOf((long) fFSPerUnit)));
-
+		logger.info("aTime "+time.toString());
 		if (time.compareTo(fStartTime) < 0) {
 			time = fStartTime;
 		} else if (time.compareTo(fEndTime) > 0) {
