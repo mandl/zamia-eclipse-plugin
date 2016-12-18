@@ -40,6 +40,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
@@ -2597,8 +2598,11 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 	private void startCanvasPaintJob() {
 
-		Rectangle clientArea = fWaveformCanvas.getClientArea();
-
+		Rectangle clientArea;
+		try {
+			clientArea = fWaveformCanvas.getClientArea();
+		
+		
 		if (clientArea.width <= 0 || clientArea.height <= 0) {
 
 			// no paint
@@ -2609,6 +2613,10 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 		if (fScheduler != null) {
 			fScheduler.schedule(job);
+		}
+		} catch (SWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
