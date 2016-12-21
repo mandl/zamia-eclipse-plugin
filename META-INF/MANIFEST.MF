@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: zamiaCAD Plugin
 Bundle-SymbolicName: org.zamia.plugin;singleton:=true
-Bundle-Version: 0.11.4
+Bundle-Version: 0.11.5
 Bundle-Activator: org.zamia.plugin.ZamiaPlugin
 Require-Bundle: org.zamia.cad,
  org.eclipse.ui.editors;bundle-version="3.10.0",
@@ -16,7 +16,6 @@ Require-Bundle: org.zamia.cad,
  org.eclipse.search;bundle-version="3.11.0",
  org.eclipse.ui.navigator;bundle-version="3.6.100",
  org.eclipse.jdt.ui;bundle-version="3.12.1",
- org.eclipse.gef;bundle-version="3.11.0",
  org.eclipse.ui.views;bundle-version="3.8.101",
  org.eclipse.ui.navigator.resources;bundle-version="3.5.100",
  org.eclipse.equinox.event;bundle-version="1.3.200"
@@ -230,47 +229,6 @@ Export-Package: com.spinn3r.log5j;uses:="org.apache.log4j,org.apache.log4j.spi",
    org.eclipse.debug.ui,
    org.eclipse.ui.wizards.newresource",
  org.zamia.plugin.views;uses:="org.eclipse.ui.views.markers",
- org.zamia.plugin.views.fsm;
-  uses:="org.eclipse.ui,
-   org.eclipse.gef.palette,
-   org.zamia.fsm,
-   org.eclipse.jface.resource,
-   org.zamia.plugin.views.fsm.model",
- org.zamia.plugin.views.fsm.actions;uses:="org.eclipse.gef.ui.actions,org.eclipse.jface.action,org.eclipse.gef",
- org.zamia.plugin.views.fsm.figures;
-  uses:="org.eclipse.swt.graphics,
-   org.eclipse.draw2d,
-   org.zamia.plugin.views.fsm.model,
-   org.eclipse.draw2d.geometry",
- org.zamia.plugin.views.fsm.model;uses:="org.zamia.vhdl.ast,org.eclipse.gef.requests,org.eclipse.ui.views.properties",
- org.zamia.plugin.views.fsm.model.commands;uses:="org.eclipse.gef.commands,org.zamia.plugin.views.fsm.model",
- org.zamia.plugin.views.fsm.parts;
-  uses:="org.eclipse.swt.events,
-   org.eclipse.swt.graphics,
-   org.eclipse.gef.editparts,
-   org.eclipse.jface.viewers,
-   org.eclipse.gef,
-   org.eclipse.gef.commands,
-   org.eclipse.draw2d,
-   org.zamia.plugin.views.fsm.model,
-   org.eclipse.draw2d.geometry,
-   org.eclipse.gef.tools,
-   org.eclipse.draw2d.graph",
- org.zamia.plugin.views.fsm.policies;
-  uses:="org.zamia.plugin.views.fsm.parts,
-   org.eclipse.gef,
-   org.eclipse.gef.commands,
-   org.eclipse.gef.requests,
-   org.eclipse.gef.editpolicies,
-   org.zamia.plugin.views.fsm.model",
- org.zamia.plugin.views.fsm.ui;
-  uses:="org.eclipse.gef.palette,
-   org.eclipse.ui,
-   org.eclipse.core.runtime,
-   org.eclipse.gef,
-   org.eclipse.core.resources,
-   org.zamia.plugin.views.fsm.model,
-   org.eclipse.gef.ui.parts",
  org.zamia.plugin.views.navigator;
   uses:="org.zamia,
    org.zamia.vhdl.ast,

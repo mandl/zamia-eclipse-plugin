@@ -78,6 +78,7 @@ public class BasicViewerConfiguration extends SourceViewerConfiguration {
 		public abstract void addStrComment(List<IRule> rules, Token string, Token comment);
 		
 		public static Token token(String constant) {
+			
 			IPreferenceStore store = ZamiaPlugin.getDefault().getPreferenceStore();
 			RGB rgb = PreferenceConverter.getColor(store, constant);
 			Color color = ColorManager.getInstance().getColor(rgb);

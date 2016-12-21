@@ -273,7 +273,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 				for (int i = 0; i < n; i++) {
 
 					TraceLine tl = fTraceLines.get(i);
-					
+
 					if (fGotoNext) {
 						BigInteger t = tl.findNextTransition(cursor, fTime, fEndTime);
 
@@ -298,7 +298,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 
 				cursor.dispose();
 				cursor = null;
-				logger.info("New: "+fNewTime.toString()+ " Old " + fTime.toString());
+				logger.info("New: " + fNewTime.toString() + " Old " + fTime.toString());
 
 				if (fNewTime != null && fNewTime.compareTo(fSimulator.getEndTime()) < 0) {
 					fDisplay.syncExec(new Runnable() {
@@ -306,11 +306,12 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 							moveCursor(fNewTime);
 						}
 					});
-				} else 
-				{
+				} else {
 					logger.info("No more transitions " + fNewTime.toString() + " " + fSimulator.getEndTime());
-					
-					//ZamiaPlugin.showError(getSite().getShell(), "No more transitions found.", "No transition found.", "Signal doesn't have further transitions.");
+
+					// ZamiaPlugin.showError(getSite().getShell(), "No more
+					// transitions found.", "No transition found.", "Signal
+					// doesn't have further transitions.");
 
 					// ZamiaPlugin.showError(getSite().getShell(), "No more
 					// transitions found.", "No transition found.", "Signal
@@ -341,21 +342,18 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		fD[0].setStyle(bold ? SWT.BOLD : 0);
 		return new Font(fDisplay, fD[0]);
 	}
-	
-	private void updateMarker(boolean drawTime)
-	{
-		
-		fTraceLineTreeItemMap.forEach((k,v)->{ 
-			
-			if(k instanceof TraceLineMarkers)
-			{
-				TraceLineMarkers a = (TraceLineMarkers)k;
-				a.drawTime = drawTime;
-			}	
-			
-		});
-		repaint();
-		
+
+	private void updateMarker(boolean drawTime) {
+		if (fTraceLineTreeItemMap != null) {
+			fTraceLineTreeItemMap.forEach((k, v) -> {
+				if (k instanceof TraceLineMarkers) {
+					TraceLineMarkers a = (TraceLineMarkers) k;
+					a.drawTime = drawTime;
+				}
+
+			});
+			repaint();
+		}
 	}
 
 	public void createPartControl(Composite aParent) {
@@ -805,7 +803,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		column1.setText("Signal");
 		treeColumnLayout.setColumnData(column1, new ColumnWeightData(50, 150, true));
 
-		//column1.setEditingSupport(new FirstNameEditingSupport(viewer));
+		// column1.setEditingSupport(new FirstNameEditingSupport(viewer));
 		TreeColumn column2 = new TreeColumn(fTree, SWT.LEFT);
 		column2.setText("Value");
 		treeColumnLayout.setColumnData(column2, new ColumnWeightData(50, 4096, true));
@@ -813,8 +811,6 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		fTree.setHeaderVisible(true);
 		fTree.setRedraw(true);
 		fTree.pack();
-		
-	
 
 		fTree.addMouseListener(new MouseListener() {
 			public void mouseDoubleClick(MouseEvent e) {
@@ -2607,19 +2603,18 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 		Rectangle clientArea;
 		try {
 			clientArea = fWaveformCanvas.getClientArea();
-		
-		
-		if (clientArea.width <= 0 || clientArea.height <= 0) {
 
-			// no paint
-			return;
-		}
+			if (clientArea.width <= 0 || clientArea.height <= 0) {
 
-		WaveformPaintJob job = new WaveformPaintJob(this, clientArea);
+				// no paint
+				return;
+			}
 
-		if (fScheduler != null) {
-			fScheduler.schedule(job);
-		}
+			WaveformPaintJob job = new WaveformPaintJob(this, clientArea);
+
+			if (fScheduler != null) {
+				fScheduler.schedule(job);
+			}
 		} catch (SWTException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2748,7 +2743,7 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 	private void moveCursor(BigInteger aTime) {
 
 		BigInteger time = aTime.subtract(aTime.mod(BigInteger.valueOf((long) fFSPerUnit)));
-		logger.info("aTime "+time.toString());
+		logger.info("aTime " + time.toString());
 		if (time.compareTo(fStartTime) < 0) {
 			time = fStartTime;
 		} else if (time.compareTo(fEndTime) > 0) {
@@ -3503,23 +3498,22 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			}
 		}
 	}
-	
+
 	private void doNewMarker() {
-	
-			TreeItem[] items = fTree.getSelection();
 
-			if (items.length == 0)
-				return;
-			TraceLine tline = (TraceLine) items[0].getData();
+		TreeItem[] items = fTree.getSelection();
 
-			if (tline instanceof TraceLineMarkers) {
-				
-				((TraceLineMarkers) tline).addMarker(fCursorTime, "default");
-				repaint();
-			
-			}
-			
-			
+		if (items.length == 0)
+			return;
+		TraceLine tline = (TraceLine) items[0].getData();
+
+		if (tline instanceof TraceLineMarkers) {
+
+			((TraceLineMarkers) tline).addMarker(fCursorTime, "default");
+			repaint();
+
+		}
+
 	}
 
 	private void doFindReferences(boolean aWritersOnly) {
@@ -3587,36 +3581,31 @@ public class SimulatorView extends ViewPart implements IGISimObserver {
 			return fProgressMonitor.isCanceled();
 		}
 	}
-	
-	public HashMap<TraceLine, TreeItem> getTraceLineTreeItemMap()
-	{
+
+	public HashMap<TraceLine, TreeItem> getTraceLineTreeItemMap() {
 		return fTraceLineTreeItemMap;
 	}
 
 	public void getMarkers(ArrayList<TraceLineMarker> fMarkers) {
-		
-		
-		
-		if(fTraceLineTreeItemMap != null)
-		{	
-		fTraceLineTreeItemMap.forEach((k,v)->{ 
-			
-			if(k instanceof TraceLineMarkers)
-			{
-				//TreeMap<BigInteger, TraceLineMarker> my = new TreeMap<BigInteger, TraceLineMarker>();
-				
-				TreeMap<BigInteger, TraceLineMarker> my = ((TraceLineMarkers)k).getAllMarkers();
-				
-				my.forEach((k1,v1)->{
-					
-					fMarkers.add(v1);
-				});
-			
-				
-			}	
-			
-		});
+
+		if (fTraceLineTreeItemMap != null) {
+			fTraceLineTreeItemMap.forEach((k, v) -> {
+
+				if (k instanceof TraceLineMarkers) {
+					// TreeMap<BigInteger, TraceLineMarker> my = new
+					// TreeMap<BigInteger, TraceLineMarker>();
+
+					TreeMap<BigInteger, TraceLineMarker> my = ((TraceLineMarkers) k).getAllMarkers();
+
+					my.forEach((k1, v1) -> {
+
+						fMarkers.add(v1);
+					});
+
+				}
+
+			});
 		}
-		
+
 	}
 }

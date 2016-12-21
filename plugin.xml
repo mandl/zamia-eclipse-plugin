@@ -40,15 +40,6 @@
             id="org.zamia.editors.VerilogEditor">
       </editor>
       <editor
-            default="true"
-            name="Zamia FSM Editor"
-            extensions="fsm"
-            icon="share/images/vhdl_source.gif"
-            class="org.zamia.plugin.views.fsm.ui.FSMEditor"
-            contributorClass="org.zamia.plugin.views.fsm.actions.FSMActionBarContributor"
-            id="org.zamia.plugin.views.fsm.ui.FSMEditor">
-      </editor>
-      <editor
             class="org.zamia.plugin.editors.buildpath.BuildPathEditor"
             default="true"
             filenames="BuildPath.txt"
@@ -1186,7 +1177,7 @@
      <page
            class="org.zamia.plugin.preferences.SyntaxColoringPreferencePage"
            id="org.zamia.plugin.preferences.SyntaxColoringPreferencePage"
-           name="zamiaCAD Preferences">
+           name="zamiaCAD">
      </page>
   </extension>
   <extension

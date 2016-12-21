@@ -36,6 +36,8 @@ public class PreferenceConstants {
 	
 	public static final String P_MARKER_LABEL = "Show Maker Time"; //$NON-NLS-1$
 	
+	public static final String P_PYTHON_PATH ="Set python path";
+	
 
 
 }

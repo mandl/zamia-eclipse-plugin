@@ -8,7 +8,9 @@ package org.zamia.plugin.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
@@ -28,7 +30,7 @@ public class SyntaxColoringPreferencePage extends FieldEditorPreferencePage impl
 	public SyntaxColoringPreferencePage() {
 		super(GRID);
 		setPreferenceStore(ZamiaPlugin.getDefault().getPreferenceStore());
-		setDescription("zamiaCAD Syntax Coloring Preference Page");
+		setDescription("zamiaCAD");
 	}
 
 	public void createFieldEditors() {
@@ -45,7 +47,7 @@ public class SyntaxColoringPreferencePage extends FieldEditorPreferencePage impl
 		addField(new ColorFieldEditor(PreferenceConstants.P_MODULE_LABEL, "Module label color", getFieldEditorParent()));
 		addField(new ColorFieldEditor(PreferenceConstants.P_HILIGHT, "Hilight color", getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_MARKER_LABEL,"Show maker time",getFieldEditorParent()));
-		
+		addField(new DirectoryFieldEditor(PreferenceConstants.P_PYTHON_PATH,"Set python path",getFieldEditorParent()));
 		/*
 		
 		addField(new DirectoryFieldEditor(PreferenceConstants.P_PATH, 
