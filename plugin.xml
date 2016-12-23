@@ -23,6 +23,14 @@
    </extension>
 
    <extension point="org.eclipse.ui.editors">
+   
+   <editor
+          class="org.zamia.plugin.editors.UCFEditor"
+          default="false"
+          extensions="ucf"
+          id="org.zamia.editors.UCFEditor"
+          name="ucf Editor">
+    </editor>
       <editor
             name="VHDL Editor"
             extensions="vhdl,vhd"

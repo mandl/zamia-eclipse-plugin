@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -42,6 +43,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -85,7 +87,7 @@ import org.zamia.util.PathName;
  * 
  * @author Guenter Bartsch
  */
-public class ZamiaPlugin extends AbstractUIPlugin {
+public class ZamiaPlugin  extends AbstractUIPlugin{
 
 	public static final String PLUGIN_ID = "org.zamia.plugin";
 
@@ -224,6 +226,7 @@ public class ZamiaPlugin extends AbstractUIPlugin {
 	 * Returns the shared instance.
 	 */
 	public static ZamiaPlugin getDefault() {
+		Assert.isNotNull(plugin);
 		return plugin;
 	}
 
@@ -754,5 +757,7 @@ public class ZamiaPlugin extends AbstractUIPlugin {
 	public static IWorkbenchPage getPage() {
 		return getWorkbenchWindow().getActivePage();
 	}
+
+
 	
 }

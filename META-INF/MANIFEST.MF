@@ -19,7 +19,6 @@ Require-Bundle: org.zamia.cad,
  org.eclipse.ui.views;bundle-version="3.8.101",
  org.eclipse.ui.navigator.resources;bundle-version="3.5.100",
  org.eclipse.equinox.event;bundle-version="1.3.200"
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: bin/,
  .,
@@ -267,3 +266,4 @@ Export-Package: com.spinn3r.log5j;uses:="org.apache.log4j,org.apache.log4j.spi",
    org.eclipse.core.resources,
    org.zamia.instgraph,
    org.eclipse.ui.part"
+Bundle-ActivationPolicy: lazy

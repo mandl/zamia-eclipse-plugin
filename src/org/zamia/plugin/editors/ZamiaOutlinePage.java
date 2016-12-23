@@ -10,6 +10,7 @@ package org.zamia.plugin.editors;
 
 import java.util.function.Function;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
@@ -31,7 +32,6 @@ import org.zamia.ZamiaProject;
 import org.zamia.plugin.ZamiaPlugin;
 import org.zamia.plugin.ZamiaProjectMap;
 import org.zamia.vhdl.ast.VHDLNode; // shouldn't it be ASTNode?
-
 
 /**
  * Content outline page for the VHDL editor.
@@ -69,7 +69,8 @@ public class ZamiaOutlinePage extends ContentOutlinePage {
 		public OutlineSearchAction(final ZamiaOutlineContentProvider aContentProvider) {
 			super("org.zamia.actions.OutlineSearchAction", AS_PUSH_BUTTON);
 			fContentProvider = aContentProvider;
-			final ImageDescriptor desc = AbstractUIPlugin.imageDescriptorFromPlugin(ZamiaPlugin.PLUGIN_ID, "share/images/search.gif");
+			final ImageDescriptor desc = AbstractUIPlugin.imageDescriptorFromPlugin(ZamiaPlugin.PLUGIN_ID,
+					"share/images/search.gif");
 			setImageDescriptor(desc);
 			setToolTipText("Search...");
 		}
@@ -92,7 +93,7 @@ public class ZamiaOutlinePage extends ContentOutlinePage {
 					try {
 
 						// FIXME: doesn't work (tree needs to be expanded)
-						//fTreeViewer.setSelection(s, true);
+						// fTreeViewer.setSelection(s, true);
 
 						int n = s.size();
 						if (n < 1) {
@@ -108,7 +109,8 @@ public class ZamiaOutlinePage extends ContentOutlinePage {
 
 							ZamiaProject zprj = strategy.getZPrj();
 
-							ZamiaPlugin.showSource(getSite().getPage(), ZamiaProjectMap.getProject(zprj), ast.getLocation(), 0);
+							ZamiaPlugin.showSource(getSite().getPage(), ZamiaProjectMap.getProject(zprj),
+									ast.getLocation(), 0);
 						}
 
 					} catch (Throwable e1) {
@@ -149,23 +151,29 @@ public class ZamiaOutlinePage extends ContentOutlinePage {
 		fIsDisposed = false;
 
 		update();
-		
+
 		new OpenAndLinkWithEditorHelper(fTreeViewer) {
-			
-			{setLinkWithEditor(true);}
-			
-			@Override protected void activate(ISelection selection) {
+
+			{
+				setLinkWithEditor(true);
+			}
+
+			@Override
+			protected void activate(ISelection selection) {
 				open(selection, true);
 			}
 
-			@Override protected void linkToEditor(ISelection selection) {
-				//fEditor.doSelectionChanged(selection);
+			@Override
+			protected void linkToEditor(ISelection selection) {
+				// fEditor.doSelectionChanged(selection);
 				fEditor.outlineSelectionChanged(selection);
 			}
 
-			@Override protected void open(ISelection selection, boolean activate) {
+			@Override
+			protected void open(ISelection selection, boolean activate) {
 				linkToEditor(selection);
-				if (activate) getSite().getPage().activate(fEditor);
+				if (activate)
+					getSite().getPage().activate(fEditor);
 			}
 
 		};
@@ -202,27 +210,42 @@ public class ZamiaOutlinePage extends ContentOutlinePage {
 
 	public void select(SourceLocation target) {
 		ZamiaOutlineContentProvider cp = (ZamiaOutlineContentProvider) fTreeViewer.getContentProvider();
-		
-		
-		IDesignModule[] modules = fEditor.getReconcilingStrategy().getRootElements();
-		
-		if (modules.length == 0) return;
-		Object sm = null; for (int i = 0 ; i != modules.length; i++) 
-			if (modules[i].getLocation().compareTo(target) <= 0) sm = modules[i];
-		
-		class Helper {void selectLastChild(Object parent) {
-			Object lastChild = null; Object[] elements = cp.getChildren(parent)  ;
-			if (elements != null) for (int i = 0 ; i != elements.length; i++)
-				if (elements[i] instanceof ASTNode) {
-					ASTNode astEl = (ASTNode) elements[i];
-					if (astEl.getLocation().compareTo(target) <= 0) lastChild = astEl;
-				};
-			
-			if (lastChild == null) fTreeViewer.setSelection(new StructuredSelection(parent), true);
-			else selectLastChild(lastChild);
 
-		}}
-		new Helper().selectLastChild(sm);
+		IDesignModule[] modules = fEditor.getReconcilingStrategy().getRootElements();
+
+		if (modules.length == 0)
+			return;
+		Object sm = null;
+		for (int i = 0; i != modules.length; i++)
+			if (modules[i].getLocation().compareTo(target) <= 0)
+				sm = modules[i];
+
+		class Helper {
+			void selectLastChild(Object parent) {
+				Object lastChild = null;
+				Object[] elements = cp.getChildren(parent);
+				if (elements != null)
+					for (int i = 0; i != elements.length; i++)
+						if (elements[i] instanceof ASTNode) {
+							ASTNode astEl = (ASTNode) elements[i];
+							if (astEl.getLocation().compareTo(target) <= 0)
+								lastChild = astEl;
+						}
+				;
+
+				if (lastChild == null){
+					Assert.isNotNull(parent);
+					fTreeViewer.setSelection(new StructuredSelection(parent), true);
+				} else {
+					selectLastChild(lastChild);
+				}
+
+			}
+		}
+		if(sm != null)
+		{
+			new Helper().selectLastChild(sm);
+		}
 	}
-	
+
 }

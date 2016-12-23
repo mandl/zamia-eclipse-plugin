@@ -12,33 +12,31 @@ import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.swt.widgets.Composite;
 import org.zamia.plugin.editors.buildpath.BasicViewerConfiguration;
 
-public class PythonEditor extends ErrorMarkEditor {
+public class UCFEditor extends ErrorMarkEditor {
 	
-	public static class PythonConfiguration extends BasicViewerConfiguration {
+	public static class UCFConfiguration extends BasicViewerConfiguration {
 
 		static class Scanner extends BasicIdentifierScanner {
 
 			@Override
 			public void addStrComment(List<IRule> rules, Token string, Token comment) {
-				rules.add(new SingleLineRule("'", "'", string));
-				rules.add(new SingleLineRule("\"", "\"", string)); // curiously, this already covers the multiline strings
-				rules.add(new MultiLineRule("\"\"\"", "\"\"\"", string));
-				rules.add(new MultiLineRule("'''", "'''", getCommentToken()));
+			
 				rules.add(new EndOfLineRule("#", getCommentToken()));
 			}
 			
-			public boolean ignoreCase() {return false;}
+			public boolean ignoreCase() {return true;}
 
 			public String[] getKeywords() {
-				return new String[] {"and","del","from","not","while","as","elif","global","or","with","assert","else","if","pass","yield","break","except","import","print","class","exec","in","raise","continue","finally","is","return","def","for","lambda","try"};
+				return new String[] {"NET","LOC","IOSTANDARD","SLEW","DRIVE","CONFIG","PROHIBIT","PERIOD"};
 			} 
 
 			
 		}
 		
-		public PythonConfiguration(PythonEditor editor) {
+		public UCFConfiguration(UCFEditor editor) {
 			super(new Scanner(), new String[] {"#", ""}, editor);
 		}
 		
@@ -58,8 +56,8 @@ public class PythonEditor extends ErrorMarkEditor {
 		
 	}
 	
-	public PythonEditor() {
-		setSourceViewerConfiguration(new PythonConfiguration(this));
+	public UCFEditor() {
+		setSourceViewerConfiguration(new UCFConfiguration(this));
 	}
 
 	
