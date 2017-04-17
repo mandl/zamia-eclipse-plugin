@@ -14,7 +14,7 @@ import java.util.List;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.SingleLineRule;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.IToken;
 import org.zamia.plugin.editors.buildpath.BasicViewerConfiguration.BasicIdentifierScanner;
 
 /**
@@ -37,7 +37,7 @@ public class VHDLEditor extends ZamiaEditor {
 			return keywords;
 		}
 		
-		public void addStrComment(List<IRule> rules, Token string, Token comment) {
+		public void addStrComment(List<IRule> rules, IToken string, IToken comment) {
 
 			//		RGB colorBackground = PreferenceConverter.getColor(store, PreferenceConstants.P_BACKGROUND);
 
@@ -47,10 +47,10 @@ public class VHDLEditor extends ZamiaEditor {
 			//IToken comment = token(colorComment),colorManager.getColor(colorBackground),0));
 
 			// Add rule for single line comments.
-			rules.add(new EndOfLineRule("--", getCommentToken()));
+			rules.add(new EndOfLineRule("--", comment));
 
 			// Add rule for strings and character constants.
-			rules.add(new SingleLineRule("\"", "\"", getStringToken(), '\\'));
+			rules.add(new SingleLineRule("\"", "\"", string, '\\'));
 			// FIXME between ' and ' should only one character to be scanned as string
 			//rules.add(new SingleLineRule("\'", "\'", string, '\\')); 
 			// Add word rule for keywords.

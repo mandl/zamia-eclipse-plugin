@@ -5,7 +5,7 @@ import java.util.List;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.SingleLineRule;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.IToken;
 import org.zamia.plugin.editors.buildpath.BasicViewerConfiguration.BasicIdentifierScanner;
 
 public class VerilogEditor extends ZamiaEditor {
@@ -14,7 +14,7 @@ public class VerilogEditor extends ZamiaEditor {
 
 		public boolean ignoreCase() { return false; }
 
-		public void addStrComment(List<IRule> rules, Token string, Token comment) {
+		public void addStrComment(List<IRule> rules, IToken string, IToken comment) {
 
 	        // Add rule for single line comments.
 	        rules.add(new EndOfLineRule("//", comment));

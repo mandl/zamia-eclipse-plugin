@@ -75,7 +75,7 @@ public class BasicViewerConfiguration extends SourceViewerConfiguration {
 		
 		public abstract boolean ignoreCase();
 		
-		public abstract void addStrComment(List<IRule> rules, Token string, Token comment);
+		public abstract void addStrComment(List<IRule> rules, IToken string, IToken comment);
 		
 		public static Token token(String constant) {
 			IPreferenceStore store = ZamiaPlugin.getDefault().getPreferenceStore();
@@ -83,11 +83,6 @@ public class BasicViewerConfiguration extends SourceViewerConfiguration {
 			Color color = ColorManager.getInstance().getColor(rgb);
 			return new Token(new TextAttribute(color));
 		}
-		
-		public static Token getCommentToken() {return token(PreferenceConstants.P_COMMENT);}
-		public static Token getStringToken() {return token(PreferenceConstants.P_STRING);}
-		public static Token getKeywordToken() {return token(PreferenceConstants.P_KEYWORD);}
-		public static Token getDefaultToken() {return token(PreferenceConstants.P_DEFAULT);}
 		
 		public BasicIdentifierScanner () {
 			IToken kwToken = token(PreferenceConstants.P_KEYWORD);
@@ -102,14 +97,15 @@ public class BasicViewerConfiguration extends SourceViewerConfiguration {
 				wr.addWord(keyword, kwToken);
 
 			rules.add(wr);
-			addStrComment(rules, getCommentToken(), getStringToken());
+			
+			IToken ct = token(PreferenceConstants.P_COMMENT);
+			IToken st = token(PreferenceConstants.P_STRING);
+			addStrComment(rules, ct, st);
 			
 			setRules(rules.toArray(new IRule[rules.size()]));
 		}
 		
 	}
-
-	final static String COMMENT_CONTENT_TYPE = "__comment_partition_content_type";
 
 	//private final ISharedTextColors fColors;
 	private ITextEditor fEditor;
@@ -129,13 +125,8 @@ public class BasicViewerConfiguration extends SourceViewerConfiguration {
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		
-	    IPreferenceStore store = ZamiaPlugin.getDefault().getPreferenceStore();
-		
-		RGB colorComment = PreferenceConverter.getColor(store, PreferenceConstants.P_COMMENT);
-		
-		NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(new TextAttribute(ColorManager.getInstance().getColor(colorComment)));
-		reconciler.setDamager(ndr, COMMENT_CONTENT_TYPE);
-		reconciler.setRepairer(ndr, COMMENT_CONTENT_TYPE);
+//		NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(new TextAttribute(ColorManager.getInstance().getColor(colorComment)));
+//		reconciler.setDamager(ndr, COMMENT_CONTENT_TYPE);
 
 		return reconciler;
 	}
