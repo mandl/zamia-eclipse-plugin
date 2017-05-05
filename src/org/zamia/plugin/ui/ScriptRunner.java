@@ -105,6 +105,7 @@ public class ScriptRunner {
 
 		private final ZCJInterpreter fInterpreter;
 		private final String fScriptFile;
+		private Thread thread;
 
 		public ScriptJob(ZCJInterpreter aInterpreter, String aScriptFile) {
 			super("Script execution...");
@@ -116,14 +117,21 @@ public class ScriptRunner {
 		@Override
 		protected IStatus run(IProgressMonitor iProgressMonitor) {
 			try {
+				thread = Thread.currentThread();
 				fInterpreter.evalFile(fScriptFile);
 			} catch (Throwable e) {
 				el.logException(e);
 			}
 			return Status.OK_STATUS;
 		}
-	}
+		
+		@Override
+		protected void canceling() {
+			thread.stop(); // This is dirty but seems working to cancel the pythoninterpriter
+		}
 
+	}
+	
 	private static final JobChangeAdapter REPORT_VISUALIZER = new JobChangeAdapter() {
 		@Override
 		public void done(final IJobChangeEvent event) {
