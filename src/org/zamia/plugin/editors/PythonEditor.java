@@ -10,7 +10,7 @@ import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.SingleLineRule;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.zamia.plugin.editors.buildpath.BasicViewerConfiguration;
 
@@ -21,7 +21,7 @@ public class PythonEditor extends ErrorMarkEditor {
 		static class Scanner extends BasicIdentifierScanner {
 
 			@Override
-			public void addStrComment(List<IRule> rules, Token string, Token comment) {
+			public void addStrComment(List<IRule> rules, IToken string, IToken comment) {
 				rules.add(new SingleLineRule("'", "'", string));
 				rules.add(new SingleLineRule("\"", "\"", string)); // curiously, this already covers the multiline strings
 				rules.add(new MultiLineRule("\"\"\"", "\"\"\"", string));

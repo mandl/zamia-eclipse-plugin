@@ -119,7 +119,7 @@ class ExtendedReferencesSearchQuery extends ReferencesSearchQuery {
 		if (fFollowAssignments) {
 			IGAssignmentsSearch rs = new IGAssignmentsSearch(fZPrj, fDepth);
 
-			Map<Long, RootResult> searches = rs.assignmentThroughSearch(object, path, fSearchUpward, fSearchDownward, fWritersOnly, fReadersOnly);
+			Map<Long, RootResult> searches = rs.assignmentThroughSearch(object, path, fSearchUpward, fSearchDownward, fWritersOnly);
 	
 			for (Long key : searches.keySet()) {
 				mergeResults(key, searches.get(key));
