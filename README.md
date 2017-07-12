@@ -12,11 +12,11 @@ http://zamiacad.sourceforge.net/web/
 [Install Jython 2.7](https://wiki.python.org/jython/InstallationInstructions#id2)
 
 
-![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/Jython Installation_01.png)
+![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/JythonInstallation_01.png)
 
-![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/Jython Installation_02.png)
+![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/JythonInstallation_02.png)
 
-![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/Jython Installation_03.png)
+![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/JythonInstallation_03.png)
 
 
 
