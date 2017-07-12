@@ -25,8 +25,8 @@ public class PythonEditor extends ErrorMarkEditor {
 				rules.add(new SingleLineRule("'", "'", string));
 				rules.add(new SingleLineRule("\"", "\"", string)); // curiously, this already covers the multiline strings
 				rules.add(new MultiLineRule("\"\"\"", "\"\"\"", string));
-				rules.add(new MultiLineRule("'''", "'''", getCommentToken()));
-				rules.add(new EndOfLineRule("#", getCommentToken()));
+				//rules.add(new MultiLineRule("'''", "'''", getCommentToken()));
+				//rules.add(new EndOfLineRule("#", getCommentToken()));
 			}
 			
 			public boolean ignoreCase() {return false;}
