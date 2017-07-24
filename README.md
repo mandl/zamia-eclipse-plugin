@@ -100,7 +100,7 @@ Start Zamiacad
 
 ### Starting the Simulator
 
-![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/DebugConfigurations _020.png)
+![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/DebugConfigurations_020.png)
 
 
 
@@ -120,7 +120,7 @@ Start Zamiacad
 ![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/addMarker.png)
 
 
-![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/MarkerLineLabel _025.png)
+![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/MarkerLineLabel_025.png)
 
 
 
