@@ -25,7 +25,7 @@ If you are new to Eclipse, you might find the Eclipse Help useful, especially th
 ## Install Jython
 
 
-Zaniacad uses Python scripting. So we need a Jython interpreter.
+Zamiacad uses Python scripting. So we need a Jython interpreter.
  
 Download Jython 2.7 **jython-installer-2.7.0.jar**
 
@@ -96,7 +96,28 @@ Start Zamiacad
         Many features which the eclipse framework provides
 
 
-## Usinge the internal Simulator
+## Optional Install GHDL under Ubuntu 16.04
+
+[GHDL](https://github.com/tgingold/ghdl)
+
+
+	sudo apt-get install gnat
+
+	sudo apt-get install zlib1g-dev
+
+	git clone https://github.com/tgingold/ghdl.git
+
+	./configure --prefix=/usr/local
+	
+	make
+
+	sudo make install
+	
+
+
+## Using the internal Simulator
+
+
 
 ### Starting the Simulator
 
@@ -106,19 +127,25 @@ Start Zamiacad
 
 ### Add the signals
 
+Select the signal in the editor view and select in the context menu *Show in Simulator View*.
+
 ![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/addSignal.png)
 
 
 ### Run the simulator
+
+Click on *Run*.
 
 ![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/runSim.png)
 
 
 ### Add markers and measure time
 
+Click on *Add group / marker line*.
 
 ![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/addMarker.png)
 
+Click on the marker line and slect in context menu "Add Marker".
 
 ![](https://raw.githubusercontent.com/mandl/zamia-eclipse-plugin/master/img/MarkerLineLabel_025.png)
 

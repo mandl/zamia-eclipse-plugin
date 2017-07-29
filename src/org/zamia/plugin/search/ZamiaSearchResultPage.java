@@ -21,12 +21,14 @@ import org.eclipse.debug.internal.ui.views.launch.ImageImageDescriptor;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.callhierarchy.CallHierarchyImageDescriptor;
-import org.eclipse.jdt.internal.ui.viewsupport.ColoringLabelProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -95,6 +97,7 @@ public class ZamiaSearchResultPage extends AbstractTextSearchViewPage {
 
 				Object[] elements = atsr.getElements();
 
+				@SuppressWarnings("rawtypes")
 				ArrayList res = new ArrayList();
 
 				int n = elements.length;
@@ -240,13 +243,109 @@ public class ZamiaSearchResultPage extends AbstractTextSearchViewPage {
 		if (fContentProvider != null)
 			fContentProvider.refresh();
 	}
+	
+	class MyCellLabelProvider extends DecoratingStyledCellLabelProvider implements ILabelProvider {
+	
+
+		public MyCellLabelProvider(IStyledLabelProvider labelProvider) {
+			super(labelProvider,null,null);
+			
+		}
+		
+		@Override
+		public String getText(Object element) {
+			return getStyledText(element).getString();
+		}
+
+		@Override
+		public String getToolTipText(Object element) {
+			
+			
+			String ToolTip="";
+			
+			
+			if ( element instanceof  ReferenceSearchResult)
+			{
+				
+				ToolTip =  "SearchResult";
+			
+			}
+			
+			if ( element instanceof  ReferenceSite)
+			{
+				
+				ReferenceSite rs = (ReferenceSite) element;
+
+				//Read, Write, Call, Declaration, ReadWrite, Unknown, Instantiation, Assignment
+				switch (rs.getRefType()) {
+				case Declaration:
+					ToolTip = "Declaration";
+					break;
+				case Read:
+					ToolTip = "Read";
+					break;
+				case Write:
+					ToolTip = "Write";
+					break;
+				case ReadWrite:
+					ToolTip = "ReadWrite";
+					break;
+				case Instantiation:
+					ToolTip = "Instantiation";
+					break;
+				case Unknown:
+					ToolTip = "Unknown";
+					break;
+				case Assignment:
+					ToolTip = "Assignment";
+					break;	
+				case Call:
+					ToolTip = "Call";
+					break;	
+				default:
+					ToolTip = "???";
+					break;
+							
+				}
+				
+				
+			}
+			return ToolTip;
+		}
+
+		@Override
+		public Point getToolTipShift(Object object) {
+			return new Point(5,5);
+		}
+
+		@Override
+		public int getToolTipDisplayDelayTime(Object object) {
+			return 500;
+		}
+
+		@Override
+		public int getToolTipTimeDisplayed(Object object) {
+			return 5000;
+		}
+
+		
+	}
+	
 
 	protected void configureTreeViewer(TreeViewer viewer) {
 		viewer.setComparator(createViewerComparator());
-        viewer.setLabelProvider(new ColoringLabelProvider(createLabelProvider()));
+        //viewer.setLabelProvider(new ColoringLabelProvider(createLabelProvider()));
 		fContentProvider = new ZamiaSearchTreeContentProvider();
 		viewer.setContentProvider(fContentProvider);
 		viewer.addSelectionChangedListener(backAction);
+		
+		ColumnViewerToolTipSupport.enableFor(viewer);
+		
+		MyCellLabelProvider labelProvider = new MyCellLabelProvider(createLabelProvider());
+	
+
+
+		    viewer.setLabelProvider(labelProvider);
 		
 		// one click just shows in editor
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -340,7 +439,7 @@ public class ZamiaSearchResultPage extends AbstractTextSearchViewPage {
 			setToolTipText("Highlights lines in Editor");
 		}
 		public void run() {
-			ZamiaSearchResult root = (ZamiaSearchResult) getViewer().getInput();
+			//ZamiaSearchResult root = (ZamiaSearchResult) getViewer().getInput();
 
 			
 			if (isEnabled()) {
@@ -482,6 +581,14 @@ public class ZamiaSearchResultPage extends AbstractTextSearchViewPage {
 					return rwIcon;
 				case Instantiation:
 					return instantiationIcon;
+				case Assignment:
+					break;
+				case Call:
+					break;
+				case Unknown:
+					break;
+				default:
+					break;
 				}
 			} else if (element instanceof ReferenceSearchResult) {
 
@@ -580,14 +687,16 @@ public class ZamiaSearchResultPage extends AbstractTextSearchViewPage {
     }
 	
     class BackAction extends Action implements ISelectionChangedListener { 
-    	List hist = new ArrayList(); 
+    	@SuppressWarnings("rawtypes")
+		List hist = new ArrayList(); 
     	
     	public Object current() {
     		return hist.get(hist.size()-1);
     	}
 
 
-    	public void selectionChanged(SelectionChangedEvent event) {
+    	@SuppressWarnings("unchecked")
+		public void selectionChanged(SelectionChangedEvent event) {
     		
     		Object selObj = getFirstSelected(event);
 
