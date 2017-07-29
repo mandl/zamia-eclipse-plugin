@@ -399,6 +399,18 @@ end if ;
 	autoinsert="false" 
 	context="org.zamia.plugin.editors.completion.vhdlContext" 
 	deleted="false" 
+	description="Insert a sequential rising if statement"
+	id="org.zamia.plugin.editors.completion.vhdl.ifRising" 
+	enabled="true" 
+	name="ifRising">if rising_edge(${condition}) then
+  ${cursor}
+end if ;  
+</template>
+
+<template 
+	autoinsert="false" 
+	context="org.zamia.plugin.editors.completion.vhdlContext" 
+	deleted="false" 
 	description="Insert a library clause"
 	id="org.zamia.plugin.editors.completion.vhdl.library" 
 	enabled="true" 
@@ -548,6 +560,21 @@ begin
 end process ${name};
 </template>
 
+
+<template 
+	autoinsert="false" 
+	context="org.zamia.plugin.editors.completion.vhdlContext" 
+	deleted="false" 
+	description="Insert a process with sensitivity_list"
+	id="org.zamia.plugin.editors.completion.vhdl.processSen" 
+	enabled="true" 
+	name="processSen">${name} : process(${sensitivity_list})
+begin
+	${cursor}
+end process ${name};
+</template>
+
+
 <template 
 	autoinsert="false" 
 	context="org.zamia.plugin.editors.completion.vhdlContext" 
@@ -644,6 +671,26 @@ end record ${identifier}
 	autoinsert="false" 
 	context="org.zamia.plugin.editors.completion.vhdlContext" 
 	deleted="false" 
+	description="Insert an initialized signal declaration std_logic"
+	id="org.zamia.plugin.editors.completion.vhdl.signalDecl_std_logic" 
+	enabled="true" 
+	name="signalDecl_std_logic">signal ${identifier_list} : std_logic := '${0}'; ${cursor} 
+</template>
+
+<template 
+	autoinsert="false" 
+	context="org.zamia.plugin.editors.completion.vhdlContext" 
+	deleted="false" 
+	description="Insert an initialized signal declaration std_logic_vector"
+	id="org.zamia.plugin.editors.completion.vhdl.signalDecl_logic_vector" 
+	enabled="true" 
+	name="signalDecl_logic_vector">signal ${identifier_list} : std_logic_vector( ${start} downto ${stop}) := (others => '${0}'); ${cursor} 
+</template>
+
+<template 
+	autoinsert="false" 
+	context="org.zamia.plugin.editors.completion.vhdlContext" 
+	deleted="false" 
 	description="Insert a subtype declaration"
 	id="org.zamia.plugin.editors.completion.vhdl.subtype" 
 	enabled="true" 
@@ -722,4 +769,23 @@ end loop ;
 	name="ssa2">with ${expression} select ${target} &lt;= ${cursor} ; 
 </template>
 
+std_logic_vector
+<template 
+	autoinsert="false" 
+	context="org.zamia.plugin.editors.completion.vhdlContext" 
+	deleted="false" 
+	description="Insert std_logic"
+	id="org.zamia.plugin.editors.completion.vhdl.std_logic" 
+	enabled="true" 
+	name="std_logic">std_logic ${cursor}
+</template>
+<template 
+	autoinsert="false" 
+	context="org.zamia.plugin.editors.completion.vhdlContext" 
+	deleted="false" 
+	description="Insert std_logic_vector"
+	id="org.zamia.plugin.editors.completion.vhdl.std_logic_vector" 
+	enabled="true" 
+	name="std_logic_vector">std_logic_vector( ${1} downto ${0} ) ${cursor}
+</template>
 </templates>
