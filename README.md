@@ -112,7 +112,32 @@ Start Zamiacad
 	make
 
 	sudo make install
+
+### Optional Install GTKWave under Ubuntu 16.04
+
+[GTKWave](http://gtkwave.sourceforge.net/)
+
+    svn checkout https://svn.code.sf.net/p/gtkwave/code/ gtkwave-code
+
+    sudo apt-get install tcl-dev
 	
+    sudo apt-get install tk-dev
+
+    sudo apt-get install gperf
+
+    sudo apt-get install liblzma-dev
+
+    sudo apt-get install libgtk2.0-dev
+    
+    sudo apt-get install libjudy-dev
+
+    sudo apt-get install libgconf2-dev
+    
+    ./configure --enable-judy --enable-struct-pack --with-gconf
+
+    make
+
+    sudo make install
 
 
 ## Using the internal Simulator

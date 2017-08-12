@@ -43,7 +43,6 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -81,6 +80,7 @@ import org.zamia.plugin.efs.ZamiaFileStore;
 import org.zamia.plugin.views.navigator.IGModuleWrapper;
 import org.zamia.plugin.views.rtl.RTLView;
 import org.zamia.util.PathName;
+
 
 /**
  * The main plugin class
@@ -238,6 +238,14 @@ public class ZamiaPlugin  extends AbstractUIPlugin{
 			image = registry.get(path);
 		}
 		return image;
+	}
+	
+	/**
+	 * Returns the shared instance.
+	 */
+	public static ZamiaPlugin getPlugin()
+	{
+		return plugin;
 	}
 
 	/**

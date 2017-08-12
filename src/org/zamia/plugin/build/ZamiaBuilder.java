@@ -9,10 +9,7 @@
 package org.zamia.plugin.build;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -23,10 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
@@ -40,7 +34,6 @@ import org.zamia.BuildPathEntry;
 import org.zamia.ERManager;
 import org.zamia.ExceptionLogger;
 import org.zamia.SourceFile;
-import org.zamia.ZamiaException;
 import org.zamia.ZamiaLogger;
 import org.zamia.ZamiaProject;
 import org.zamia.ZamiaProjectBuilder;

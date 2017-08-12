@@ -101,8 +101,15 @@ public class ShowInSimAction extends OpenDeclarationAction {
 						// find local declaration, see if sim has a waveform for that
 						SearchJob job = IGReferencesSearch.findLocalDeclarationScope(proj.getIGM(), obj, path);
 						
-						ToplevelPath signalPath = job.getPath().append(job.getObject().getId());
+						if(job == null)
+						{
+							ZamiaPlugin.getDefault().getLog()
+							.log(new Status(Status.ERROR, ZamiaPlugin.PLUGIN_ID, Status.OK, "findLocalDeclarationScope fail ", null));
+							return Status.CANCEL_STATUS;
+						}
 						
+						ToplevelPath signalPath = job.getPath().append(job.getObject().getId());
+						logger.info("ShowInSimJob path: %s", signalPath.toString());
 						if (fView.hasSignal(signalPath.getPath()))
 							
 							showInSim(signalPath);
