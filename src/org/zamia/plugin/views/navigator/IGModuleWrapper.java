@@ -273,6 +273,8 @@ public class IGModuleWrapper implements Comparable<IGModuleWrapper> {
 
 				return res.toArray();
 			}
+		default:
+			break;
 
 		}
 
@@ -473,19 +475,28 @@ public class IGModuleWrapper implements Comparable<IGModuleWrapper> {
 	}
 
 	public boolean hasChildren() {
+		IGModule module;
 		switch (fOp) {
 		case LOCALS:
 			return true;
 		case BLUEIG:
-			// IGManager igm = wrapper.getZPrj().getIGM();
-			//
-			// boolean res = igm.hasChildren(wrapper.getDUUID());
-			// if (dump)
-			// logger.info("ZamiaContentProvider: hasChildren(%s)... done",
-			// element);
+			
+			HashSetArray<IGModuleWrapper> wrappers = new HashSetArray<IGModuleWrapper>();
+			IGManager igm = fZPrj.getIGM();
+			module = igm.findModule(fSignature);
+			if (module != null) {
+				findInstantiatedDUs(null, module.getStructure(), wrappers);
+
+				if(wrappers.size() == 0)
+					return false;
+				return true;
+			}
 			break;
 		case ITEM:
 			return false;
+		default:
+		 
+			break;
 		}
 
 		// FIXME
@@ -560,6 +571,8 @@ public class IGModuleWrapper implements Comparable<IGModuleWrapper> {
 			if (fPath != null) {
 				return fPath.getNullParent();
 			}
+			break;
+		default:
 			break;
 		}
 		return getPath();

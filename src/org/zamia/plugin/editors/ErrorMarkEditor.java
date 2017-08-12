@@ -21,7 +21,6 @@ import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -29,7 +28,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.ResourceUtil;
-import org.zamia.plugin.ZamiaPlugin;
 import org.zamia.plugin.editors.buildpath.BasicViewerConfiguration;
 import org.zamia.plugin.editors.buildpath.BasicViewerConfiguration.BasicIdentifierScanner;
 

@@ -8,7 +8,7 @@
 
 package org.zamia.plugin.views.rtl;
 
-import org.apache.log4j.Level;
+//import org.apache.log4j.Level;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeSelection;

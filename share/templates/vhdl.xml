@@ -674,7 +674,7 @@ end record ${identifier}
 	description="Insert an initialized signal declaration std_logic"
 	id="org.zamia.plugin.editors.completion.vhdl.signalDecl_std_logic" 
 	enabled="true" 
-	name="signalDecl_std_logic">signal ${identifier_list} : std_logic := '${0}'; ${cursor} 
+	name="signalDecl_std_logic">signal ${identifier_list} : std_logic := '${default}'; ${cursor} 
 </template>
 
 <template 
@@ -684,7 +684,7 @@ end record ${identifier}
 	description="Insert an initialized signal declaration std_logic_vector"
 	id="org.zamia.plugin.editors.completion.vhdl.signalDecl_logic_vector" 
 	enabled="true" 
-	name="signalDecl_logic_vector">signal ${identifier_list} : std_logic_vector( ${start} downto ${stop}) := (others => '${0}'); ${cursor} 
+	name="signalDecl_logic_vector">signal ${identifier_list} : std_logic_vector( ${start} downto ${stop}) := (others => '${default}'); ${cursor} 
 </template>
 
 <template 

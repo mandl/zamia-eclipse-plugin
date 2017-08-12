@@ -27,6 +27,7 @@ import org.zamia.ExceptionLogger;
 import org.zamia.SourceLocation;
 import org.zamia.Toplevel;
 import org.zamia.ToplevelPath;
+import org.zamia.ZamiaException;
 import org.zamia.ZamiaLogger;
 import org.zamia.ZamiaProject;
 import org.zamia.plugin.ZamiaPlugin;
@@ -35,7 +36,9 @@ import org.zamia.plugin.editors.ZamiaEditor;
 import org.zamia.plugin.views.rtl.RTLView;
 import org.zamia.rtl.RTLManager;
 import org.zamia.rtl.RTLModule;
+import org.zamia.vhdl.ast.Architecture;
 import org.zamia.vhdl.ast.DMUID;
+import org.zamia.vhdl.ast.Entity;
 
 /**
  * 
@@ -53,6 +56,10 @@ public class OpenFileAction extends Action {
 	private List<IGModuleWrapper> fIGWrappersSelected;
 
 	private List<RTLModuleWrapper> fRTLWrappersSelected;
+	
+	private List<Architecture> fArchitecture;
+	
+	private List<Entity> fEntity;
 
 	private List<Object> fContainersSelected; // IContainer or IWrappedResource
 
@@ -131,7 +138,56 @@ public class OpenFileAction extends Action {
 			
 			rtlv.setRTLModule(rtlm);
 			
-		} else if (fContainersSelected.size() > 0) {
+		} else if (fArchitecture.size() > 0) {
+			Architecture wrapper = fArchitecture.iterator().next();
+			
+			ZamiaProject zprj = wrapper.getZPrj();
+
+			IProject prj = ZamiaProjectMap.getProject(zprj);
+
+			SourceLocation location = wrapper.getLocation();
+
+			if (location == null) {
+				logger.error("OpenFileAction: wrapper doesn't give me a location: %s", wrapper);
+				return;
+			}
+
+			IEditorPart editPart = ZamiaPlugin.showSource(fPage, prj, location, 0);
+
+			if (editPart instanceof ZamiaEditor) {
+
+				ZamiaEditor editor = (ZamiaEditor) editPart;				
+
+			}
+			
+		
+	} else if (fEntity.size() > 0) {
+		Entity wrapper = fEntity.iterator().next();
+		
+		ZamiaProject zprj = wrapper.getZPrj();
+
+		IProject prj = ZamiaProjectMap.getProject(zprj);
+
+		SourceLocation location = wrapper.getLocation();
+
+		if (location == null) {
+			logger.error("OpenFileAction: wrapper doesn't give me a location: %s", wrapper);
+			return;
+		}
+
+		IEditorPart editPart = ZamiaPlugin.showSource(fPage, prj, location, 0);
+
+		if (editPart instanceof ZamiaEditor) {
+
+			ZamiaEditor editor = (ZamiaEditor) editPart;
+
+			
+
+		}
+
+		
+	}
+		else if (fContainersSelected.size() > 0) {
 			if (this.fProvider instanceof TreeViewer) {
 				TreeViewer viewer = (TreeViewer) this.fProvider;
 				for (Object container : fContainersSelected) {
@@ -150,7 +206,8 @@ public class OpenFileAction extends Action {
 		fContainersSelected = new ArrayList<Object>();
 		fIGWrappersSelected = new ArrayList<IGModuleWrapper>();
 		fRTLWrappersSelected = new ArrayList<RTLModuleWrapper>();
-
+		fArchitecture = new ArrayList<Architecture>();
+		fEntity = new ArrayList<Entity>();
 		ISelection selection = fProvider.getSelection();
 		if (!selection.isEmpty()) {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
@@ -182,6 +239,17 @@ public class OpenFileAction extends Action {
 
 					fRTLWrappersSelected.add(wrapper);
 				}
+				else if(element instanceof Architecture)
+				{
+					Architecture wrapper = (Architecture) element;
+					fArchitecture.add(wrapper);
+				}
+				else if(element instanceof Entity)
+				{
+					Entity wrapper = (Entity) element;
+					fEntity.add(wrapper);;
+				}
+				
 			}
 		}
 	}
